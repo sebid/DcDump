@@ -111,26 +111,31 @@ class Script():
         durDiv = (dates[1]-dates[0]).seconds / 60.    # For "per min" division
         durDiv -= pausetime / 60.
         if durDiv == 0: return ["Error, duration was 0 seconds.."]
-    
+
         numPlayers = 0
-        totalDmg = 1    
+        totalDmg = 0    
         for P in data:
             if '?' in P:
                 continue
             totalDmg += data[P]["dmg"]
             numPlayers += 1
-    
+
         if numPlayers == 0: return ["Error, no players detected.."]
-        avgDpm = number_format(totalDmg/durDiv)
-        avgDmg = number_format(totalDmg/numPlayers)
-        output = """<a href="text://<font color=#99CCFF>Time %s -> %s (%s)<br>Players: <font color=#cccc00>%d</font><br>Damage: <font color=#cccc00>%s</font> (<font color=#cccc00>%s</font>)<br>Average: <font color=#cccc00>%s</font> dmg/player<br><br>""" % (start, end, duration, numPlayers, number_format(totalDmg), avgDpm, avgDmg)
+    
+        if durDiv == 0:
+            avgDpm = number_format(0)
+            avgDmg = number_format(0)
+        else:
+            avgDpm = number_format(totalDmg/durDiv)
+            avgDmg = number_format(totalDmg/numPlayers)
+            output = """<a href="text://<font color=#99CCFF>Time %s -> %s (%s)<br>Players: <font color=#cccc00>%d</font><br>Damage: <font color=#cccc00>%s</font> (<font color=#cccc00>%s</font>)<br>Average: <font color=#cccc00>%s</font> dmg/player<br><br>""" % (start, end, duration, numPlayers, number_format(totalDmg), avgDpm, avgDmg)
     
         # Sort by damage here
         dataset = sortByDamage(data)
         outputArr = []
-
+    
         whoreout = ""
-
+    
     
         i = 1
         chunkStart = 1      # First player in chunk (for splitting into multiple files)
@@ -142,7 +147,11 @@ class Script():
             level = who[2]
             prof = who[1]
             
-            perc = 100*(P[1]/float(totalDmg))
+            try:
+                perc = 100*(P[1]/float(totalDmg))
+            except ZeroDivisionError:
+                perc = 0
+
             tmp = """<font color=#55AA55>%d.</font>  <font color=#cccc00>_ %s</font> <font color=#55AA55><font color=#10a5e5>%s</font> (<font color=#76DAFB>%d %s</font>)</font> - %.0f%% of total<br>""" % (        i, dmg, name, level, prof, perc)
             if len(output+tmp) > 3992-len(whoreout): # Maximum page size is 4096 (link also takes some space)
                 output += """{0}<br><a href='chatcmd:///start http://aodevs.com/projects/view/14'>Get parser here</a>">DD {1}-{2}</a>""".format(whoreout, chunkStart, i-1)
@@ -174,7 +183,7 @@ class Script():
         whoreout = ""
     
         numPlayers = 0
-        totalDmg = 1            # Prevents division by zero, loss of accuracy is minimal    
+        totalDmg = 0            # Prevents division by zero, loss of accuracy is minimal    
         for P in data:
             if '?' in P:
                 continue
@@ -182,9 +191,13 @@ class Script():
             numPlayers += 1
         if numPlayers == 0: return "No players"
     
-        avgDpm = number_format(totalDmg/durDiv)
-        avgDmg = number_format(totalDmg/numPlayers)
-        output = """<a href="text://<font color=#99CCFF>Time %s -> %s (%s)<br>Players: <font color=#cccc00>%d</font><br>Damage: <font color=#cccc00>%s</font> (<font color=#cccc00>%s</font>)<br>Average: <font color=#cccc00>%s</font> dmg/player<br><br><br>""" % (start, end, duration, numPlayers, number_format(totalDmg), avgDpm, avgDmg)
+        if durDiv == 0:
+            avgDpm = number_format(0)
+            avgDmg = number_format(0)
+        else:
+            avgDpm = number_format(totalDmg/durDiv)
+            avgDmg = number_format(totalDmg/numPlayers)
+            output = """<a href="text://<font color=#99CCFF>Time %s -> %s (%s)<br>Players: <font color=#cccc00>%d</font><br>Damage: <font color=#cccc00>%s</font> (<font color=#cccc00>%s</font>)<br>Average: <font color=#cccc00>%s</font> dmg/player<br><br><br>""" % (start, end, duration, numPlayers, number_format(totalDmg), avgDpm, avgDmg)
     
     
         # Sort by damage here
@@ -203,9 +216,10 @@ class Script():
             level = who[2]
             prof = who[1]
     
-            
-            percTotal = int(100*(dmg/float(totalDmg)))     # Percentage of total damage done (out of the team)
-            
+            try:
+                percTotal = int(100*(dmg/float(totalDmg)))     # Percentage of total damage done (out of the team)
+            except ZeroDivisionError:
+                percTotal = 0
             
             # Calc % of critical hits, may be 0
             if data[name]["hits"] > 0:
@@ -273,7 +287,7 @@ class Script():
         return "Not implemented"
         
     def getDcProfs(self, stats, dates, pausetime):
-        totalDmg = 1
+        totalDmg = 0
         numProfs = 0
         for Prof in stats["?Prof"]:
             totalDmg += stats["?Prof"][Prof]
@@ -297,7 +311,12 @@ class Script():
         for Prof, d in dataset:
             if d == 0: break        # End of sorted list
             dmg = number_format(d)
-            perc = 100*(d/float(totalDmg))
+            
+            try:
+                perc = 100*(d/float(totalDmg))
+            except ZeroDivisionError:
+                perc = 0
+            
             output += """<font color=#55AA55>%d.</font>  <font color=#cccc00>%s</font> <font color=#10a5e5>%ss</font> - %.f%% of total</font><br>""" % (i, dmg, Prof, perc)
             i += 1
         
@@ -330,7 +349,12 @@ class Script():
             try: who = data[name]["whois"]
             except: who = ("Unknown", "Unknown", 0)
             
-            perc = 100*(dmg/float(totalDmg))
+            try:
+                perc = 100*(dmg/float(totalDmg))
+            except ZeroDivisionError:
+                perc = 0
+            
+            
             output += """<font color=#55AA55>_%d.</font>  <font color=#cccc00>_ _%s</font> <font color=#10a5e5>%s</font> (<font color=#76DAFB>%d %s</font>) - %.f%%<br>""" % (i, number_format(dmg), name, who[2], who[1], perc)
             i += 1
             
@@ -639,7 +663,7 @@ class Script():
 
         # If the name is None, lets just bail now.
         if not name: 
-			return False
+            return False
            
         if 'shop:' in name.lower() and not containerid in self.shoppacks:
             # Add to shoppacks
@@ -748,22 +772,22 @@ class Script():
         # Make sure the scripts folder exists
         path = os.path.join(appdata, '..', "scripts")
         if not os.access(appdata, os.F_OK):
-			try: 
-				print "[Scripts] Making dir %s" % os.path.join(path, "dcDumps")
-				os.makedirs( os.path.join(path, "dcDumps") )
-			except:
-				#print "[Scripts] Failed creating scripts dir at: %s" % pathToAo 
-				print "[Scripts] Error: Could not write loot script to neither AO path nor Appdata"
-				return False
-			
+            try: 
+                print "[Scripts] Making dir %s" % os.path.join(path, "dcDumps")
+                os.makedirs( os.path.join(path, "dcDumps") )
+            except:
+                #print "[Scripts] Failed creating scripts dir at: %s" % pathToAo 
+                print "[Scripts] Error: Could not write loot script to neither AO path nor Appdata"
+                return False
+            
         if self.WriteScripts(os.path.join(appdata, "scripts", text[2]), prefix+filedata):
-			success = True
-			#print "wrote to {0}".format(os.path.join(appdata, "scripts", "loot"))
-			self.WriteScripts(os.path.join(appdata, "scripts", "e{0}".format(text[2])), '/text '+filedata)
-			return True
+            success = True
+            #print "wrote to {0}".format(os.path.join(appdata, "scripts", "loot"))
+            self.WriteScripts(os.path.join(appdata, "scripts", "e{0}".format(text[2])), '/text '+filedata)
+            return True
         else:
-			print "could not write to {0}".format(os.path.join(appdata, "scripts", text[2]))
-			return False
+            print "could not write to {0}".format(os.path.join(appdata, "scripts", text[2]))
+            return False
 
         
 __CONN = sqlite3.connect("itemdb")
@@ -782,4 +806,5 @@ def getItemName(id):
 
 if __name__ == "__main__":
     print "No test data available"
-    print getItemName(293993)    
+    print getItemName(293993)
+    
