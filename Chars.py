@@ -107,16 +107,14 @@ def getAppdataAO():
 	Gets AO /prefs/ path from Appdata
 	@return: Path or None
 	"""
-	paths = []
 	appdata = os.environ['appdata']
 	path = os.path.join(appdata, "..", "Local", "Funcom", "")
 	for root, dirs, files in os.walk(path):
 		a = os.path.basename(root).lower() == "prefs"
 		b = os.access(os.path.join(root, "prefs.xml"), os.R_OK)
 		if a and b:
-			paths.append(root)
-
-	return [x for x in set(paths)]
+			return root
+	return ""
 	
 '''
 class AnonStats (threading.Thread):
@@ -339,7 +337,7 @@ def GetAccFromID(pathToAo, initialize, filter = []):
 		pathList.append( os.path.join(pathToAo, "prefs") )
 	
 	# Appdata AO Path
-	if pathToAppdata != None and os.access(pathToAppdata[0], os.R_OK):
+	if pathToAppdata != None and os.access(pathToAppdata, os.R_OK):
 		pathList.append(pathToAppdata)
 
 	# Need at least one path
@@ -350,10 +348,10 @@ def GetAccFromID(pathToAo, initialize, filter = []):
 	for P in pathList: print "[Chars  ] %s" % P
 	
 	for Path in pathList:
-		dirPrefs = os.listdir(Path[0])
+		dirPrefs = os.listdir(Path)
 		#print "[Chars  ] Loading toons in path: %s" % Path
 		for Account in dirPrefs:
-			pathToons = os.path.join(Path[0], Account)
+			pathToons = os.path.join(Path, Account)
 			if not os.path.isdir( pathToons ): continue
 			dirToons = os.listdir(pathToons)
 			

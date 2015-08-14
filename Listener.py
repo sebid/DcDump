@@ -1,4 +1,4 @@
-﻿import sys, threading, os
+import sys, threading, os
 import ctypes
 import win32gui, win32api, win32con, ctypes.wintypes
 from Chars import UpdateToonsDB, getDimension

@@ -546,46 +546,50 @@ class Script():
         
     
     def AddOnlineStatus(self, pathToAo, online):
-        for appdata in getAppdataAO():
-            appdata = os.path.join(appdata, "..")
+        appdata = getAppdataAO()
+        if not appdata: appdata = pathToAo
+        else: appdata = os.path.join(appdata, "..")
         
-            if not os.access(pathToAo, os.F_OK) and not os.access(appdata, os.F_OK):
-                print "[Scripts] Error: Could not find a scripts folder with access rights"
-                return False
+        if not os.access(pathToAo, os.F_OK) and not os.access(appdata, os.F_OK):
+            print "[Scripts] Error: Could not find a scripts folder with access rights"
+            return False
         
-            if online:
-                od = "/text DCDump is <font color=green>currently parsing!</font>"
-            else:
-                od = "/text DCDump is <font color=red>not parsing!</font>"
+        if online:
+            od = "/text DCDump is <font color=green>currently parsing!</font>"
+        else:
+            od = "/text DCDump is <font color=red>not parsing!</font>"
             
-            for path in set([appdata]):
-                # /dc command    
-                if not self.WriteScripts( os.path.join(path, "scripts", "dc"),  "/text "+       self.getDcHelp(online)): 
-                    print "[Scripts] Could not write /dc"
+        for path in set([appdata]):
+            # /dc command    
+            if not self.WriteScripts( os.path.join(path, "scripts", "dc"),  "/text "+       self.getDcHelp(online)): 
+                print "[Scripts] Could not write /dc"
             
-                # /dcStatus
-                if not self.WriteScripts( os.path.join(path, "scripts", "dcStatus"),  od): 
-                    print "[Scripts] Could not write /dcStatus"
+            # /dcStatus
+            if not self.WriteScripts( os.path.join(path, "scripts", "dcStatus"),  od): 
+                print "[Scripts] Could not write /dcStatus"
     # End of function
 
         
     
     # Wrapper function for AddScripts_Real
     def AddScripts(self, pathToAo, data, stats, period, online, group):
-        for appdata in getAppdataAO():
-            appdata = os.path.join(appdata, "..")
+        # Check if AO folder exists
+        appdata = getAppdataAO()
+        appdata = os.path.join(appdata, "..")
 
-            if not os.access(pathToAo, os.F_OK) and not os.access(appdata, os.F_OK):
-                print "[Scripts] Error: Could not find a scripts folder with access rights"
-                return False
+        if not os.access(pathToAo, os.F_OK) and not os.access(appdata, os.F_OK):
+            print "[Scripts] Error: Could not find a scripts folder with access rights"
+            return False
         
-            # Try adding scripts to both regular AO path and Appdata
-            success = self.AddScripts_Real(appdata, data, stats, period, online, group)
+        # Try adding scripts to both regular AO path and Appdata
+        successA = self.AddScripts_Real(pathToAo, data, stats, period, online, group)
+        successB = self.AddScripts_Real(appdata, data, stats, period, online, group)
         
-            if not success:
-                print "[Scripts] Error: Could not write scripts to appdata"
-                return False 
-        return True
+        if successA or successB:
+            return True
+        else:
+            print "[Scripts] Error: Could not write scripts to neither AO path nor Appdata"
+            return False 
         
         
     def getItemName(self, id):
@@ -611,7 +615,7 @@ class Script():
         else:
             accname = self.accids[charid]
         
-        
+            
         name = None
         path = os.path.join(getAppdataAO(), accname, "Char{0}".format(charid), "Containers", "Container_51017x{0}.xml".format(containerid))
         
@@ -635,7 +639,7 @@ class Script():
 
         # If the name is None, lets just bail now.
         if not name: 
-            return False
+			return False
            
         if 'shop:' in name.lower() and not containerid in self.shoppacks:
             # Add to shoppacks
@@ -744,24 +748,24 @@ class Script():
         # Make sure the scripts folder exists
         path = os.path.join(appdata, '..', "scripts")
         if not os.access(appdata, os.F_OK):
-            try: 
-                print "[Scripts] Making dir %s" % os.path.join(path, "dcDumps")
-                os.makedirs( os.path.join(path, "dcDumps") )
-            except:
-                #print "[Scripts] Failed creating scripts dir at: %s" % pathToAo 
-                print "[Scripts] Error: Could not write loot script to neither AO path nor Appdata"
-                return False
-
+			try: 
+				print "[Scripts] Making dir %s" % os.path.join(path, "dcDumps")
+				os.makedirs( os.path.join(path, "dcDumps") )
+			except:
+				#print "[Scripts] Failed creating scripts dir at: %s" % pathToAo 
+				print "[Scripts] Error: Could not write loot script to neither AO path nor Appdata"
+				return False
+			
         if self.WriteScripts(os.path.join(appdata, "scripts", text[2]), prefix+filedata):
-            success = True
-            #print "wrote to {0}".format(os.path.join(appdata, "scripts", "loot"))
-            self.WriteScripts(os.path.join(appdata, "scripts", "e{0}".format(text[2])), '/text '+filedata)
-            return True
+			success = True
+			#print "wrote to {0}".format(os.path.join(appdata, "scripts", "loot"))
+			self.WriteScripts(os.path.join(appdata, "scripts", "e{0}".format(text[2])), '/text '+filedata)
+			return True
         else:
-            print "could not write to {0}".format(os.path.join(appdata, "scripts", text[2]))
-            return False
+			print "could not write to {0}".format(os.path.join(appdata, "scripts", text[2]))
+			return False
 
-
+        
 __CONN = sqlite3.connect("itemdb")
 def getItemName(id):
     __SQL = __CONN.cursor()
