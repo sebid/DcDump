@@ -217,7 +217,7 @@ class Script():
             prof = who[1]
     
             try:
-                percTotal = int(100*(dmg/float(totalDmg)))     # Percentage of total damage done (out of the team)
+                percTotal = round(100*(dmg/float(totalDmg)))                      # Percentage of total damage done (out of the team)
             except ZeroDivisionError:
                 percTotal = 0
             
@@ -227,11 +227,23 @@ class Script():
             else:
                 critPerc = 0
                 
+            # Calc % of glancing hits, may be 0
+            if data[name]["hits"] > 0:
+                glancePerc = data[name]["glanceHits"]/float(data[name]["hits"])*100
+            else:
+                glancePerc = 0
+                
             # Calc how much of total damage (self) done was from crits        
             try:
                 critTotal = data[name]["critAmount"]/float(data[name]["dmg"])*100
             except ZeroDivisionError:
                 critTotal = 0
+            
+            # Calc how much of total damage (self) done was from glancing hits        
+            try:
+                glanceTotal = data[name]["glanceAmount"]/float(data[name]["dmg"])*100
+            except ZeroDivisionError:
+                glanceTotal = 0
             
             nh = data[name]["nanohits"]                     # Number of nano attacks
             nd = number_format(data[name]["nano"])          # Total nano damage
@@ -244,6 +256,9 @@ class Script():
             tmpStr += """<font color=#55AA55>%d.</font>  <font color=#cccc00>%s</font> <font color=#55AA55><font color=#10a5e5>%s</font> (<font color=#76DAFB>%d %s</font>)</font> - %d%% of total<br>%d normal hits, %s dpm<br>""" % (i, number_format(dmg), name, level, prof, percTotal, data[name]["hits"], number_format(dmg/durDiv))
             if data[name]["critHits"]:  tmpStr += """%d hits (%d%%) were critical hits, being %d%% of damage.<br>""" % (data[name]["critHits"], critPerc, critTotal)
             else:                       tmpStr += "0 critical hits<br>"
+            if data[name]["glanceHits"]:  tmpStr += """%d hits (%d%%) were glancing hits, being %d%% of damage.<br>""" % (data[name]["glanceHits"], glancePerc, glanceTotal)
+            else:                       tmpStr += "0 glancing hits<br>"
+            
             tmpStr += """%d nanohits (%s dmg - %d%%)<br>""" % (nh, nd, np)
             for S in data[name]["spec"]:
                 try:                        perc = data[name]["specdmg"][S]/float(data[name]["dmg"])*100

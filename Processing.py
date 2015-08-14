@@ -226,23 +226,25 @@ class DataParser():
     # Initialize a new toon into the data dictionary
     def initToon(self, name):
         init = {}
-        init["reflect"]     = 0
-        init["dmgShield"]   = 0
-        init["dmg"]         = 0
-        init["hits"]        = 0
-        init["critAmount"]  = 0
-        init["critHits"]    = 0
-        init["nano"]        = 0
-        init["nanohits"]    = 0
-        init["pets"]        = 0
-        init["highnum"]     = 0
-        init["lownum"]      = 0
-        init["hightype"]    = "?"
-        init["lowtype"]     = "?"
-        init["spec"]        = {}
-        init["specdmg"]     = {}
-        init["whois"]       = ("Mob?", "?", 0) # Wanna store it when passing data to UI
-                                            # Avoids calling whois in too many threads
+        init["reflect"]       = 0
+        init["dmgShield"]     = 0
+        init["dmg"]           = 0
+        init["hits"]          = 0
+        init["critAmount"]    = 0
+        init["critHits"]      = 0
+        init["glanceAmount"]  = 0
+        init["glanceHits"]    = 0
+        init["nano"]          = 0
+        init["nanohits"]      = 0
+        init["pets"]          = 0
+        init["highnum"]       = 0
+        init["lownum"]        = 0
+        init["hightype"]      = "?"
+        init["lowtype"]       = "?"
+        init["spec"]          = {}
+        init["specdmg"]       = {}
+        init["whois"]         = ("Mob?", "?", 0)    # Wanna store it when passing data to UI
+                                                    # Avoids calling whois in too many threads
         
         self.globData[name] = init
 
@@ -374,7 +376,7 @@ class DataParser():
             
         
         # Grab number of weapon hits (includes crits)
-        hitIncrease = ("crit", "normal", 'fire', 'cold', 'chemical', 'radiation', 'melee', 'projectile', 'energy', 'poison')
+        hitIncrease = ("crit", "normal",'glancing', 'fire', 'cold', 'chemical', 'radiation', 'melee', 'projectile', 'energy', 'poison')
         if type in hitIncrease:
             self.globData[name]["hits"] += 1
             
@@ -388,6 +390,11 @@ class DataParser():
         if type == 'crit':
             self.globData[name]["critAmount"] += amount
             self.globData[name]["critHits"] += 1
+         
+        # Glancing stats, number of glances etc.
+        if type == 'glancing':
+            self.globData[name]["glanceAmount"] += amount
+            self.globData[name]["glanceHits"] += 1
             
        
     # Toons % Damage of team-total
@@ -436,14 +443,15 @@ class DataParser():
         Converts regex output into 'per player' etc data.
         """
         for ret in data:
+        
+            # Pets
             if (ret["pattern"] == 0):
                 self.addDamage(ret["name"], ret["target"], ret["amount"], "normal", True)
-    
             elif (ret["pattern"] == 1):
                 self.addDamage(ret["name"], ret["target"], ret["amount"], "crit", True)
             elif (ret["pattern"] == 21):
-                self.addDamage(ret["name"], ret["target"], ret["amount"], "normal", True) # Glancing!
-                
+                self.addDamage(ret["name"], ret["target"], ret["amount"], "glancing", True) # Glancing!
+            # Player
             elif (ret["pattern"] == 2):
                 self.addDamage("?You", ret["target"], ret["amount"], "nano")
             elif (ret["pattern"] == 3):
@@ -461,8 +469,8 @@ class DataParser():
             elif (ret["pattern"] == 10 or ret["pattern"] == 11):
                 self.addDamage("?You", ret["target"], ret["amount"], "reflect")
             elif (ret["pattern"] > 11 and ret["pattern"] < 16):
-                self.xptypes = ("SK", "Research", "AXP", "XP")           # TODO: Move to a more global location
-                self.addXP(ret["amount"], self.xptypes[ ret["pattern"]-12 ])  # Direct array access to avoid if-statements
+                self.xptypes = ("SK", "Research", "AXP", "XP")                          # TODO: Move to a more global location
+                self.addXP(ret["amount"], self.xptypes[ ret["pattern"]-12 ])               # Direct array access to avoid if-statements
             #elif (ret["pattern"] == 7):
             #    pass # didHeal
             #elif ret["pattern"] == 16:
@@ -482,7 +490,7 @@ class DataParser():
                 self.petAssignOther(ret["name"], ret["target"])
             
             elif (ret["pattern"] == 22):
-                self.addDamage(ret["name"], ret["target"], ret["amount"], "normal") # Glancing!
+                self.addDamage(ret["name"], ret["target"], ret["amount"], "glancing") # Glancing!
 
 
 # Gets start, stop, duration of a dataset
@@ -711,8 +719,8 @@ def SumParsedData(data, selfname, dimension, startTime, allowMobs = False, allow
             if owner != None:
                 print '[Proces.] Pet "%s" assigned to "%s" (%d dmg)' % (C, owner, P.globData[C]["dmg"])
                 try:
-					P.globData[owner]["pets"] += P.globData[C]["dmg"]
-					P.globData[owner]["dmg"] += P.globData[C]["dmg"]
+                    P.globData[owner]["pets"] += P.globData[C]["dmg"]
+                    P.globData[owner]["dmg"] += P.globData[C]["dmg"]
                 except KeyError: pass # Could be we don't actually have this person stored
                 del P.globData[C]
                 continue
