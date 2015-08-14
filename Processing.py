@@ -13,15 +13,15 @@ import re, WhoIs, time
 
 
 
-patterns = (    r'\S#0000000042000009.+,(?P<TS>\d+)](?P<name>.+) hit (?P<target>.+) for (?P<amount>\d+) points of (.+) damage\.$',                            # Pet hit + add timestamp
-                r"\S#0000000042000009.+,(?P<TS>\d+)](?P<name>.+) hit (?P<target>.+) for (?P<amount>\d+) points of (.+) damage\.\s*Critical hit!$",            # Pet critical hit + add timestamp
+patterns = (    r'\S#0000000042000009.+,(?P<TS>\d+)](?P<name>.+) hit (?P<target>.+) for (?P<amount>\d+) points of (.+) damage.$',                            # Pet hit + add timestamp
+                r"\S#0000000042000009.+,(?P<TS>\d+)](?P<name>.+) hit (?P<target>.+) for (?P<amount>\d+) points of (.+) damage\.\s*Critical hit.$",            # Pet critical hit + add timestamp
                 r"(?P<TS>\d+)]You hit (?P<target>.+) with nanobots for (?P<amount>.+) points of .+ damage\.$",                                                # You hit nano dmg..
                 r"(?P<TS>\d+)](?P<target>.+) was attacked with nanobots from (?P<name>.+) for (?P<amount>\d+) points of (.+) damage\.$",                      # Nano dmg        
                 r"(?P<TS>\d+)]You were attacked with nanobots from (?P<name>.+) for (?P<amount>\d+) points of (.+) damage\.$",                                # Someone hit you with a nano
                 r"(?P<TS>\d+)](?P<name>.+) hit (?P<target>.+) for (?P<amount>\d+) points of (?P<type>.+) damage\.$",                                          # Normal hit<-
                 r"(?P<TS>\d+)](?P<name>.+)'s reflect shield hit (?P<target>.+) for (?P<amount>\d+) points of damage\.$",                                      # Reflect shield
                 r"You healed (.+) for (\d+) points of health\.$",                                                                                             # You healed someone
-                r"(?P<TS>\d+)](?P<name>.+) hit (?P<target>.+) for (?P<amount>\d+) points of (.+) damage\.\s*Critical hit!$",                                  # Critical hit
+                r"(?P<TS>\d+)](?P<name>.+) hit (?P<target>.+) for (?P<amount>\d+) points of (.+) damage\.\s*Critical hit.$",                                  # Critical hit
                 r"(?P<TS>\d+)](?P<name>.+)'s damage shield hit (?P<target>.+) for (?P<amount>\d+) points of damage\.$",                                       # Damage shield
                 r"(?P<TS>\d+)]Your damage shield hit (?P<target>.+) for (?P<amount>\d+) points of damage\.$",                                                 # Damage shield
                 r"(?P<TS>\d+)]Your reflect shield hit (?P<target>.+) for (?P<amount>\d+) points of damage\.$",                                                # Reflect shield
@@ -31,11 +31,11 @@ patterns = (    r'\S#0000000042000009.+,(?P<TS>\d+)](?P<name>.+) hit (?P<target>
                 r"You received (?P<amount>\d+) xp\.$",                                                                                                        # Got XP
                 r"(.+) tried to hit you, but missed!$",                                                                                                       # You evaded a hit
                 r"You got healed by (?P<name>.+) for (?P<amount>\d+) points of health\.$",                                                                    # You got healed
-                r"\S#0000000040000001.+,(\d+)](?P<name>.+) attacked by (?P<target>.+)!$",                                                                     # Ignore mobs attacking our pets!
+                r"\S#0000000040000001.+,(\d+)](?P<name>.+) attacked by (?P<target>.+).$",                                                                     # Ignore mobs attacking our pets!
                 r"\S#0000000041000000.+,(\d+)](.+)'s pet, (?P<name>.+): .*",                                                                                  # Unless the mob is now our charm!
                 r"\S#0000000041000001.+,(\d+)](?P<target>.+)'s pet, (?P<name>.+): .*",                                                                        # Someone else's pet
-                r"\S#0000000042000009.+,(?P<TS>\d+)](?P<name>.+) hit (?P<target>.+) for (?P<amount>\d+) points of (.+) damage\.\s*Glancing hit!$",            # 21 Pet glancing hit + add timestamp 
-                r"(?P<TS>\d+)](?P<name>.+) hit (?P<target>.+) for (?P<amount>\d+) points of (.+) damage\.\s*Glancing hit!$"                                   # 22, Glancing hit
+                r"\S#0000000042000009.+,(?P<TS>\d+)](?P<name>.+) hit (?P<target>.+) for (?P<amount>\d+) points of (.+) damage\.\s*Glancing hit.$",            # 21 Pet glancing hit + add timestamp 
+                r"(?P<TS>\d+)](?P<name>.+) hit (?P<target>.+) for (?P<amount>\d+) points of (.+) damage\.\s*Glancing hit.$"                                   # 22, Glancing hit
                 )
 
 
