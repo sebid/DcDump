@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{b06c2a08-6816-46a2-9de6-b9de4887adb7}</ProjectGuid>
+    <ProjectHome />
+    <StartupFile>UI.py</StartupFile>
+    <SearchPath />
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <InterpreterId />
+    <InterpreterVersion />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <PropertyGroup>
+    <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
+    <PtvsTargetsFile>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets</PtvsTargetsFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="Client0.ico" />
+    <Content Include="dist\dcdump_v1.1.16\Guide.txt" />
+    <Content Include="dist\dcdump_v1.1.17\Guide.txt" />
+    <Content Include="dist\Guide.txt" />
+    <Content Include="dist\minitutorial\ao_dcdump.png" />
+    <Content Include="dist\minitutorial\index.html" />
+    <Content Include="dist\minitutorial\IngameScreenshot.png" />
+    <Content Include="dist\minitutorial\manage.png" />
+    <Content Include="dist\minitutorial\settings.png" />
+    <Content Include="dist\minitutorial\tab1_manage.png" />
+    <Content Include="dist\minitutorial\tab1_newtoon.png" />
+    <Content Include="dist\minitutorial\tab1_parsing.png" />
+    <Content Include="dist\minitutorial\tab1_toons.png" />
+    <Content Include="dist\minitutorial\tab2_history.png" />
+    <Content Include="ia\Detours\ReadMe.txt" />
+    <Content Include="ia\FindAO_AOIA\Release\BuildLog.htm" />
+    <Content Include="ia\ItemAssistantHook\CUSTOM\Debug\BuildLog.htm" />
+    <Content Include="ia\ItemAssistantHook\CUSTOM\Release\BuildLog.htm" />
+    <Content Include="ia\ListenerDLL\PyDllTest\Debug\BuildLog.htm" />
+    <Content Include="ia\ListenerDLL\PyDllTest\Protocol.txt" />
+    <Content Include="ia\ListenerDLL\PyDllTest\Release\BuildLog.htm" />
+    <Content Include="ia\ListenerDLL\_UpgradeReport_Files\UpgradeReport.css" />
+    <Content Include="ia\ListenerDLL\_UpgradeReport_Files\UpgradeReport_Minus.gif" />
+    <Content Include="ia\ListenerDLL\_UpgradeReport_Files\UpgradeReport_Plus.gif" />
+    <Content Include="ia\Listener\Debug\BuildLog.htm" />
+    <Content Include="ia\Listener\MessageIDs.txt" />
+    <Content Include="ia\Listener\Release-Debug\BuildLog.htm" />
+    <Content Include="ia\Listener\Release\BuildLog.htm" />
+    <Content Include="ia\Listener\_UpgradeReport_Files\UpgradeReport.css" />
+    <Content Include="ia\Listener\_UpgradeReport_Files\UpgradeReport_Minus.gif" />
+    <Content Include="ia\Listener\_UpgradeReport_Files\UpgradeReport_Plus.gif" />
+    <Content Include="ToDo.txt" />
+    <Content Include="web-graphs\js.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Chars.py" />
+    <Compile Include="DebugSettings.py" />
+    <Compile Include="GUI.tkinter.py" />
+    <Compile Include="Listener.py" />
+    <Compile Include="Logging.py" />
+    <Compile Include="Processing.py" />
+    <Compile Include="Scripts.py" />
+    <Compile Include="setup.py" />
+    <Compile Include="Tests.py" />
+    <Compile Include="Threadz.py" />
+    <Compile Include="trimmer.py" />
+    <Compile Include="UI.py" />
+    <Compile Include="WhoIs - Copy.py" />
+    <Compile Include="WhoIs.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="dist" />
+    <Folder Include="dist\dcdump_v1.1.16" />
+    <Folder Include="dist\dcdump_v1.1.17" />
+    <Folder Include="dist\minitutorial" />
+    <Folder Include="ia\" />
+    <Folder Include="ia\Detours" />
+    <Folder Include="ia\FindAO_AOIA\" />
+    <Folder Include="ia\FindAO_AOIA\Release" />
+    <Folder Include="ia\ItemAssistantHook\" />
+    <Folder Include="ia\ItemAssistantHook\CUSTOM\" />
+    <Folder Include="ia\ItemAssistantHook\CUSTOM\Debug" />
+    <Folder Include="ia\ItemAssistantHook\CUSTOM\Release" />
+    <Folder Include="ia\Listener" />
+    <Folder Include="ia\ListenerDLL\" />
+    <Folder Include="ia\ListenerDLL\PyDllTest" />
+    <Folder Include="ia\ListenerDLL\PyDllTest\Debug" />
+    <Folder Include="ia\ListenerDLL\PyDllTest\Release" />
+    <Folder Include="ia\ListenerDLL\_UpgradeReport_Files" />
+    <Folder Include="ia\Listener\Debug" />
+    <Folder Include="ia\Listener\Release" />
+    <Folder Include="ia\Listener\Release-Debug" />
+    <Folder Include="ia\Listener\_UpgradeReport_Files" />
+    <Folder Include="web-graphs" />
+  </ItemGroup>
+  <Import Project="$(PtvsTargetsFile)" Condition="Exists($(PtvsTargetsFile))" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="!Exists($(PtvsTargetsFile))" />
+</Project>

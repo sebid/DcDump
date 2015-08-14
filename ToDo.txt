@@ -1,0 +1,16 @@
+* Should auto detect dimension
+* finish view2.php
+* Should autodetect online toons
+* Set target window?
+
+
+Minor:
+
+
+:: Save logs on exit! (if running)
+:: web, cooldown efficiency (could do 40% more on fullauto, etc..)
+?? Exclude pets? possible?
+
+
+*) List number of hits from pets?
+
