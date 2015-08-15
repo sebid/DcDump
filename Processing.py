@@ -1,4 +1,4 @@
-﻿"""
+"""
 Main processing module
 Loads a given file, parses it in reverse via a regex search.
 Module assumes input file is small enough to fit in main memory.
@@ -7,49 +7,44 @@ Module assumes input file is small enough to fit in main memory.
 from sys import argv, exit
 import re, WhoIs, time
 
-
-
-
-
-
-
-patterns = (    r'\S#0000000042000009.+,(?P<TS>\d+)](?P<name>.+) hit (?P<target>.+) for (?P<amount>\d+) points of (.+) damage.$',                            # Pet hit + add timestamp
-                r"\S#0000000042000009.+,(?P<TS>\d+)](?P<name>.+) hit (?P<target>.+) for (?P<amount>\d+) points of (.+) damage\.\s*Critical hit.$",            # Pet critical hit + add timestamp
-                r"(?P<TS>\d+)]You hit (?P<target>.+) with nanobots for (?P<amount>.+) points of .+ damage\.$",                                                # You hit nano dmg..
-                r"(?P<TS>\d+)](?P<target>.+) was attacked with nanobots from (?P<name>.+) for (?P<amount>\d+) points of (.+) damage\.$",                      # Nano dmg        
-                r"(?P<TS>\d+)]You were attacked with nanobots from (?P<name>.+) for (?P<amount>\d+) points of (.+) damage\.$",                                # Someone hit you with a nano
-                r"(?P<TS>\d+)](?P<name>.+) hit (?P<target>.+) for (?P<amount>\d+) points of (?P<type>.+) damage\.$",                                          # Normal hit<-
-                r"(?P<TS>\d+)](?P<name>.+)'s reflect shield hit (?P<target>.+) for (?P<amount>\d+) points of damage\.$",                                      # Reflect shield
-                r"You healed (.+) for (\d+) points of health\.$",                                                                                             # You healed someone
-                r"(?P<TS>\d+)](?P<name>.+) hit (?P<target>.+) for (?P<amount>\d+) points of (.+) damage\.\s*Critical hit.$",                                  # Critical hit
-                r"(?P<TS>\d+)](?P<name>.+)'s damage shield hit (?P<target>.+) for (?P<amount>\d+) points of damage\.$",                                       # Damage shield
-                r"(?P<TS>\d+)]Your damage shield hit (?P<target>.+) for (?P<amount>\d+) points of damage\.$",                                                 # Damage shield
-                r"(?P<TS>\d+)]Your reflect shield hit (?P<target>.+) for (?P<amount>\d+) points of damage\.$",                                                # Reflect shield
-                r"You gained (?P<amount>\d+) points of Shadowknowledge\.$",                                                                                   # Got SK
-                r"(?P<amount>\d+) of your (.+) were allocated to your personal research\.$",                                                                  # Research
-                r"You gained (?P<amount>\d+) new Alien Experience Points\.$",                                                                                 # Got AXP
-                r"You received (?P<amount>\d+) xp\.$",                                                                                                        # Got XP
-                r"(.+) tried to hit you, but missed!$",                                                                                                       # You evaded a hit
-                r"You got healed by (?P<name>.+) for (?P<amount>\d+) points of health\.$",                                                                    # You got healed
-                r"\S#0000000040000001.+,(\d+)](?P<name>.+) attacked by (?P<target>.+).$",                                                                     # Ignore mobs attacking our pets!
-                r"\S#0000000041000000.+,(\d+)](.+)'s pet, (?P<name>.+): .*",                                                                                  # Unless the mob is now our charm!
-                r"\S#0000000041000001.+,(\d+)](?P<target>.+)'s pet, (?P<name>.+): .*",                                                                        # Someone else's pet
-                r"\S#0000000042000009.+,(?P<TS>\d+)](?P<name>.+) hit (?P<target>.+) for (?P<amount>\d+) points of (.+) damage\.\s*Glancing hit.$",            # 21 Pet glancing hit + add timestamp 
-                r"(?P<TS>\d+)](?P<name>.+) hit (?P<target>.+) for (?P<amount>\d+) points of (.+) damage\.\s*Glancing hit.$"                                   # 22, Glancing hit
+patterns = (    r'\S#0000000042000009.+,(?P<TS>\d+)](?P<name>.+) hit (?P<target>.+) for (?P<amount>\d+) points of (.+) damage.$',                                # 0 Pet hit + add timestamp
+                r"\S#0000000042000009.+,(?P<TS>\d+)](?P<name>.+) hit (?P<target>.+) for (?P<amount>\d+) points of (.+) damage\.\s*Critical hit.$",               # 1 Pet critical hit + add timestamp
+                r"(?P<TS>\d+)]You hit (?P<target>.+) with nanobots for (?P<amount>.+) points of .+ damage\.$",                                                   # 2 You hit nano dmg..
+                r"(?P<TS>\d+)](?P<target>.+) was attacked with nanobots from (?P<name>.+) for (?P<amount>\d+) points of (.+) damage\.$",                         # 3 Nano dmg
+                r"(?P<TS>\d+)]You were attacked with nanobots from (?P<name>.+) for (?P<amount>\d+) points of (.+) damage\.$",                                   # 4 Someone hit you with a nano
+                r"(?P<TS>\d+)](?P<name>.+) hit (?P<target>.+) for (?P<amount>\d+) points of (?P<type>.+) damage\.$",                                             # 5 Normal hit<-
+                r"(?P<TS>\d+)](?P<name>.+)'s reflect shield hit (?P<target>.+) for (?P<amount>\d+) points of damage\.$",                                         # 6 Reflect shield
+                r"You healed (.+) for (\d+) points of health\.$",                                                                                                # 7 You healed someone
+                r"(?P<TS>\d+)](?P<name>.+) hit (?P<target>.+) for (?P<amount>\d+) points of (.+) damage\.\s*Critical hit.$",                                     # 8 Critical hit
+                r"(?P<TS>\d+)](?P<name>.+)'s damage shield hit (?P<target>.+) for (?P<amount>\d+) points of damage\.$",                                          # 9 Damage shield
+                r"(?P<TS>\d+)]Your damage shield hit (?P<target>.+) for (?P<amount>\d+) points of damage\.$",                                                    # 10 Damage shield
+                r"(?P<TS>\d+)]Your reflect shield hit (?P<target>.+) for (?P<amount>\d+) points of damage\.$",                                                   # 11 Reflect shield
+                r"You gained (?P<amount>\d+) points of Shadowknowledge\.$",                                                                                      # 12 Got SK
+                r"(?P<amount>\d+) of your (.+) were allocated to your personal research\.$",                                                                     # 13 Research
+                r"You gained (?P<amount>\d+) new Alien Experience Points\.$",                                                                                    # 14 Got AXP
+                r"You received (?P<amount>\d+) xp\.$",                                                                                                           # 15 Got XP
+                r"(.+) tried to hit you, but missed!$",                                                                                                          # 16 You evaded a hit
+                r"You got healed by (?P<name>.+) for (?P<amount>\d+) points of health\.$",                                                                       # 17 You got healed
+                r"\S#0000000040000001.+,(\d+)](?P<name>.+) attacked by (?P<target>.+).$",                                                                        # 18 Ignore mobs attacking our pets!
+                r"\S#0000000041000000.+,(\d+)](.+)'s pet, (?P<name>.+): .*",                                                                                     # 19 Unless the mob is now our charm!
+                r"\S#0000000041000001.+,(\d+)](?P<target>.+)'s pet, (?P<name>.+): .*",                                                                           # 20 Someone else's pet
+                r"\S#0000000042000009.+,(?P<TS>\d+)](?P<name>.+) hit (?P<target>.+) for (?P<amount>\d+) points of (.+) damage\.\s*Glancing hit.$",               # 21 Pet glancing hit + add timestamp 
+                r"(?P<TS>\d+)](?P<name>.+) hit (?P<target>.+) for (?P<amount>\d+) points of (.+) damage\.\s*Glancing hit.$"                                      # 22, Glancing hit
                 )
-
 
 # Pets with level restrictions, for limiting pets to players by level
 # Care must be taken, as whois database may be outdated!
 restrictedPets = {
     'Bureaucrat':(
+    (160, "Carlita Desposito"),
     (205, "Corporate Guardian"),
     (215, "CEO Guardian"),
     (220,"Carlo Pinnetti")),
     'Engineer':(
-    (100, "Predator M-30"),
+    (100, "Prototype Predator M-30"),
+    (150, "Predator M-30"),
     (175, "Upgraded Predator M-30"),
-    (201, "Slayerdroid Annihilator"),
+    (175, "Slayerdroid Annihilator"),
     (203, "Advanced Predator M-30"),
     (205, "Devastator Drone"),
     (207, "Semi-Sentient Predator M-30"),
@@ -57,23 +52,55 @@ restrictedPets = {
     (211, "Military-Grade Predator M-30"),
     (213, "Fieldsweeper Devastator Drone"),
     (215, "Marauder M-45"),
+    (215, "Ravening M-60"),
     (217, "Desolator Assault Drone"),
     (219, "Military-Grade Marauder M-45"),
     (220, "Widowmaker Battle Drone")),
     'Meta-Physicist':(
-    (165, "Biazu the Vile"),
-    (195, "Urolok the Rotten"),
-    (201, "Ettu the Cursed"),
-    (212, "Zhok the Abomination"),
+    (25, "Praetorian Legionnaire"),
+    (135, "Tormented Revenant"),
+    (150, "Biazu the Vile"),
+    (175, "Urolok the Rotten"),
+    (201, "Ettu the Cursed"), # Bugged in 18.8.2, should not be 201, but possibly 190-195
+    (201, "Zhok the Abomination"),
     (220, "The Rihwen"))
 }
 
 # Default pet names, for connecting pets with professions/players
-cratPets = (    "Basic Worker-Droid",    "Limited Worker-Driod",    "Faithful Worker-Droid",    "Advanced Worker",    "Supervisor-Grade Worker-Droid",    "Executive-Grade Worker-Droid",    "Director-Grade Worker-Droid",    "Basic Helper-Droid",    "Limited Helper-Bot",    "Faithful Helper-Droid",    "Advanced Helper",    "Supervisor-Grade Helper-Droid",    "Executive-Grade Helper-Droid",    "Director-Grade Helper-Droid",    "Basic Attendant-Droid",    "Limited Attendant-Droid",    "Faithful Attendant-Droid",    "Advanced Attendant-Droid",    "Supervisor-Grade Attendant-Droid",    "Executive-Grade Attendant-Droid",    "Director-Grade Attendant-Droid",    "Basic Assistant-Droid",    "Limited Assistant-Droid",    "Faithful Assistant-Droid",    "Advanced Assistant-Droid",    "Supervisor-Grade Assistant-Droid",    "Executive-Grade Assistant-Droid",    "Director-Grade Assistant-Droid",    "Basic Aide-Droid",    "Limited Aide-Droid",    "Faithful Aide-Droid",    "Advanced Aide-Droid",    "Supervisor-Grade Aide-Droid",    "Executive-Grade Aide-Droid",    "Director-Grade Aide-Droid",    "Basic Secretary-Droid",    "Limited Secretary-Droid",    "Bureaucrat Secretary", "Faithful Secretary-Droid",    "Advanced Secretary-Droid",    "Supervisor-Grade Secretary-Droid",    "Executive-Grade Secretary-Droid",    "Director-Grade Secretary-Droid",    "Basic Administrator",    "Limited Administrator-Droid",    "Faithful Administrator-Droid",    "Advanced Administrator-Droid",    "Supervisor-Grade Administrator-Droid",    "Executive-Grade Administrator-Droid",    "Director-Grade Administrator-Droid",    "Basic Minion",    "Limited Minion",    "Faithful Minion",    "Advanced Minion",    "Supervisor-Grade Minion",    "Executive-Grade Minion",    "Director-Grade Minion",    "Basic Bodyguard",    "Limited Bodyguard",    "Faithful Bodyguard",    "Advanced Bodyguard",    "Supervisor-Grade Bodyguard",    "Executive-Grade Bodyguard",    "Director-Grade Bodyguard",    "Corporate Guardian",    "CEO Guardian",    "Carlo Pinnetti")
-engPets = ("Upgraded Android",    "Upgraded Automaton",    "Upgraded Gladiatorbot",    "Upgraded Guardbot",    "Upgraded Warbot",    "Upgraded Warmachine",    "Warbot",    "Warmachine",    "Reactivated Wardroid",    "Semi-Sentient Android",    "Semi-Sentient Automaton",    "Semi-Sentient Gladiatorbot",    "Semi-Sentient Guardbot",    "Semi-Sentient Warbot",    "Semi-Sentient Wardroid",    "Semi-Sentient Warmachine",    "Slayerdroid Guardian",    "Slayerdroid Protector",    "Slayerdroid Sentinel",    "Slayerdroid Warden",    "Lesser Warbot",    "Lesser Warmachine",    "Military-Grade Warbot",    "Military-Grade Warmachine",    "Patchwork Android",    "Patchwork Automaton",    "Patchwork Gladiatorbot",    "Patchwork Guardbot",    "Patchwork Warbot",    "Patchwork Warmachine",    "Perfected Automaton",    "Perfected Gladiatorbot",    "Perfected Guardbot",    "Perfected Warbot",    "Perfected Warmachine",    "Flawed Automaton",    "Flawed Gladiatorbot",    "Flawed Guardbot",    "Flawed Warbot",    "Flawed Warmachine",    "Gladiatorbot",    "Guardbot",    "Inferior Android",    "Inferior Automaton",    "Inferior Gladiatorbot",    "Inferior Guardbot",    "Inferior Warbot",    "Inferior Warmachine",    "Lesser Android",    "Lesser Automaton",    "Lesser Gladiatorbot",    "Lesser Guardbot",    "Decommissioned Wardroid",    "Feeble Android",    "Feeble Gladiatorbot",    "Feeble Guardbot",    "Feeble Warbot",    "Feeble Warmachine",    "Flawed Android",    "Advanced Gladiatorbot",    "Advanced Guardbot",    "Advanced Warbot",    "Advanced Warmachine",    "Android",    "Automaton",    "Common Android",    "Common Automaton",    "Common Gladiatorbot",    "Common Guardbot",    "Common Warbot",    "Common Warmachine",    "Advanced Android",    "Advanced Automaton",    "Slayerdroid Annihilator",    "Devastator Drone",    "Battlefield Devastator Drone",    "Fieldsweeper Devastator Drone",    "Desolator Assault Drone",    "Widowmaker Battle Drone",    "Predator M-30",    "Upgraded Predator M-30",    "Advanced Predator M-30",    "Semi-Sentient Predator M-30",    "Military-Grade Predator M-30",    "Marauder M-45",    "Military-Grade Marauder M-45",    "Ravening M-60",    "Perfected Android",    "Feeble Automaton")
-mpPets = (    "Enmity",    "Demon",    "Lemur",    "Wrath Incarnation",    "Supreme Enmity Personification",    "Supreme Wrath Incarnation",    "Inferior Wrath Incarnation",    "Transcendent Frenzy Embodiment",    "Transcendent Wrath Incarnation",    "Supreme Rage Materialization",    "Transcendent Anger Manifestation",    "Supreme Frenzy Embodiment",    "Supreme Fury Externalization",    "Superior Wrath Incarnation",    "Supreme Anger Manifestation",    "Superior Frenzy Embodiment",    "Superior Fury Externalization",    "Superior Rage Materialization",    "Superior Enmity Personification",    "Rage Materialization",    "Fiend",    "Superior Anger Manifestation",    "Lesser Rage Materialization",    "Lesser Wrath Incarnation",    "Lesser Frenzy Embodiment",    "Lesser Fury Externalization",    "Inferior Fury Externalization",    "Inferior Rage Materialization",    "Lesser Enmity Personification",    "Inferior Anger Manifestation",    "Inferior Enmity Personification",    "Greater Fury Externalization",    "Greater Rage Materialization",    "Greater Wrath Incarnation",    "Greater Anger Manifestation",    "Greater Enmity Personification",    "Greater Frenzy Embodiment",    "Enmity Personification",    "Frenzy Embodiment",    "Fury Externalization",    "Anger Manifestation",    "Inferior Frenzy Embodiment",    "Cacodemon",    "Transcendent Enmity Personification",    "Transcendent Fury Externalization",    "Transcendent Rage Materialization",    "Biazu the Vile",    "Urolok the Rotten",    "Ettu the Cursed",    "Zhok the Abomination",    "The Rihwen",    "Lesser Anger Manifestation")
-badNames = ("Guard", "Fanatic", "Bartender", "Cultist")
+cratPets = ("Basic Worker-Droid",       "Limited Worker-Droid",           "Faithful Worker-Droid",           "Advanced Worker",                 "Supervisor-Grade Worker-Droid",           "Executive-Grade Worker-Droid",           "Director-Grade Worker-Droid",
+            "Basic Helper-Droid",       "Limited Helper-Bot",             "Faithful Helper-Droid",           "Advanced Helper",                 "Supervisor-Grade Helper-Droid",           "Executive-Grade Helper-Droid",           "Director-Grade Helper-Droid",
+            "Basic Attendant-Droid",    "Limited Attendant-Droid",        "Faithful Attendant-Droid",        "Advanced Attendant-Droid",        "Supervisor-Grade Attendant-Droid",        "Executive-Grade Attendant-Droid",        "Director-Grade Attendant-Droid",
+            "Basic Assistant-Droid",    "Limited Assistant-Droid",        "Faithful Assistant-Droid",        "Advanced Assistant-Droid",        "Supervisor-Grade Assistant-Droid",        "Executive-Grade Assistant-Droid",        "Director-Grade Assistant-Droid",
+            "Basic Aide-Droid",         "Limited Aide-Droid",             "Faithful Aide-Droid",             "Advanced Aide-Droid",             "Supervisor-Grade Aide-Droid",             "Executive-Grade Aide-Droid",             "Director-Grade Aide-Droid",
+            "Basic Secretary-Droid",    "Limited Secretary-Droid",        "Faithful Secretary-Droid",        "Advanced Secretary-Droid",        "Supervisor-Grade Secretary-Droid",        "Executive-Grade Secretary-Droid",        "Director-Grade Secretary-Droid",
+            "Basic Administrator",      "Limited Administrator-Droid",    "Faithful Administrator-Droid",    "Advanced Administrator-Droid",    "Supervisor-Grade Administrator-Droid",    "Executive-Grade Administrator-Droid",    "Director-Grade Administrator-Droid",
+            "Basic Minion",             "Limited Minion",                 "Faithful Minion",                 "Advanced Minion",                 "Supervisor-Grade Minion",                 "Executive-Grade Minion",                 "Director-Grade Minion",
+            "Basic Bodyguard",          "Limited Bodyguard",              "Faithful Bodyguard",              "Advanced Bodyguard",              "Supervisor-Grade Bodyguard",              "Executive-Grade Bodyguard",              "Director-Grade Bodyguard",
+            "Carlita Desposito",        "Corporate Guardian",             "CEO Guardian",                    "Carlo Pinnetti"
+            )
+
+engPets = ("Feeble Automaton",            "Patchwork Automaton",             "Lesser Automaton",                 "Inferior Automaton",         "Flawed Automaton",               "Common Automaton",                "Automaton",        "Upgraded Automaton",              "Advanced Automaton",       "Perfected Automaton",       "Semi-Sentient Automaton",
+            "Feeble Android",             "Patchwork Android",               "Lesser Android",                   "Inferior Android",           "Flawed Android",                 "Common Android",                  "Android",          "Upgraded Android",                "Advanced Android",         "Perfected Android",         "Semi-Sentient Android",
+            "Feeble Gladiatorbot",        "Patchwork Gladiatorbot",          "Lesser Gladiatorbot",              "Inferior Gladiatorbot",      "Flawed Gladiatorbot",            "Common Gladiatorbot",             "Gladiatorbot",     "Upgraded Gladiatorbot",           "Advanced Gladiatorbot",    "Perfected Gladiatorbot",    "Semi-Sentient Gladiatorbot",
+            "Feeble Guardbot",            "Patchwork Guardbot",              "Lesser Guardbot",                  "Inferior Guardbot",          "Flawed Guardbot",                "Common Guardbot",                 "Guardbot",         "Upgraded Guardbot",               "Advanced Guardbot",        "Perfected Guardbot",        "Semi-Sentient Guardbot",
+            "Feeble Warbot",              "Patchwork Warbot",                "Lesser Warbot",                    "Inferior Warbot",            "Flawed Warbot",                  "Common Warbot",                   "Warbot",           "Upgraded Warbot",                 "Advanced Warbot",          "Perfected Warbot",          "Semi-Sentient Warbot",          "Military-Grade Warbot",
+            "Feeble Warmachine",          "Patchwork Warmachine",            "Lesser Warmachine",                "Inferior Warmachine",        "Flawed Warmachine",              "Common Warmachine",               "Warmachine",       "Upgraded Warmachine",             "Advanced Warmachine",      "Perfected Warmachine",      "Semi-Sentient Warmachine",      "Military-Grade Warmachine",
+            "Decommissioned Wardroid",    "Reactivated Wardroid",            "Semi-Sentient Wardroid",
+            "Slayerdroid Protector",      "Slayerdroid Warden",              "Slayerdroid Sentinel",             "Slayerdroid Guardian",       "Slayerdroid Annihilator",
+            "Devastator Drone",           "Battlefield Devastator Drone",    "Fieldsweeper Devastator Drone",    "Desolator Assault Drone",    "Widowmaker Battle Drone",
+            "Prototype Predator M-30",    "Predator M-30",                   "Upgraded Predator M-30",           "Advanced Predator M-30",     "Semi-Sentient Predator M-30",    "Military-Grade Predator M-30",    "Marauder M-45",    "Military-Grade Marauder M-45",    "Ravening M-60"
+            )
+
+# In 18.7 MP pets became scalable, with simplified names, Ex. Fiend -> Metaphysical Demon, Transcendent Enmity Personification -> Enmity Personification
+mpPets = ("Anger Manifestation",    "Fury Externalization",    "Rage Materialization",    "Wrath Incarnation",    "Frenzy Embodiment",    "Enmity Personification",
+            "Praetorian Legionnaire",    "Tormented Revenant",
+            "Metaphysical Demon",
+            "Biazu the Vile",    "Urolok the Rotten",    "Ettu the Cursed",    "Zhok the Abomination",    "The Rihwen"
+            )
+
+badNames = ("Guard",                 "Fanatic",                "Bartender",                "Cultist")
 allPets = cratPets + engPets + mpPets 
+
 
 def getMatch(data):
     """
@@ -87,32 +114,31 @@ def getMatch(data):
     output = {}
     for pat in patterns:
         currStamp = 0
-        
-        
+
         match = re.search(pat, data, re.I) # Case insensitive, greedy
-        
+
         if match != None:
             try: output["name"] = match.group("name")
             except: pass
-            
+
             try: output["target"] = match.group("target")
             except: pass
-            
+
             try: output["amount"] = match.group("amount")
             except: pass
-                
+
             try: output["type"] = match.group("type")
             except: pass
-            
-            try:    output["TS"] = int(match.group("TS"))
+
+            try: output["TS"] = int(match.group("TS"))
             except: output["TS"] = 0
-            
+
             output["pattern"] = i
-            
+
             return output
 
         i += 1
-        
+
     # Trash data, such as "logging out, 30 second timer.."
     return None
 
@@ -124,18 +150,18 @@ class DataParser():
         self.globStats["?Prof"] = {'Adventurer':0, 'Agent':0, 'Bureaucrat':0, 'Doctor':0, 'Enforcer':0, 'Engineer':0, 'Fixer':0, 'Keeper':0, 'Martial Artist':0, 'Meta-Physicist':0, 'Nano-Technician':0, 'Shade':0, 'Soldier':0, 'Trader':0, 'Unknown':0}
         self.globStats["xp"] = {"SK":0, "Research":0, "AXP":0, "XP":0}
         self.globData["?Tanks"] = {}
-        
+
         #self.isPlayer = r"^[A-Z][a-z]{3,}[a-z]*[0-9]*$"
         self.isPlayer = r"^[A-Z][a-z]{3,}[a-z]*[0-9]*(-\d+)?$"
         self.w = WhoIs.WhoIs(dimension, True)
-        
+
         # Info about the person parsing
         self.dim = dimension
         self.selfname = selfname
         name, prof, level = self.w.whois(selfname, dimension)
         if prof == 'Bureaucrat': self.isSelfCrat = True
         else: self.isSelfCrat = False
-        
+
         # Time period, must be updated externally
         self.period = []
         self.__petIgnores = {}          # NOT pets
@@ -153,19 +179,19 @@ class DataParser():
     def petException(self, name):
         """Pets excempt from the petIgnores list"""
         self.__petExceptions[name] = 1
-        
+
     def isPetOther(self, pet):
         """Returns a string (or None) of the pets owner"""
         try: return self.globData[pet]["owner"]
         except: return None
-            
+
     def petAssignOther(self, pet, owner):
         """Assigns a pet to another player"""
-        
+
         # Make sure the pet exists
         if not pet in self.globData:
             self.initToon(pet)
-            
+
         # Check if it already has an owner, if so, skip. (CONFLICT?)
         co = None
         try: co = self.globData[pet]["owner"]
@@ -173,12 +199,12 @@ class DataParser():
             self.globData[pet]["owner"] = owner
             print """[Proces.] Pet "%s" now tied to player "%s" """ % (pet, owner)
             return
-        
+
         if co != owner:
             print """[Proces.] Warning: Pet "%s" already had owner "%s", can't assign to "%s" """ % (pet, co, owner)
         else:
             print """[Proces.] Info: Pet "%s" already had the same owner (%s) """ % (pet, owner)
-        
+
     def petBan(self, name):
         """Pets that are banned from dataset (not really your pets)"""
         self.__petIgnores[name] = 1
@@ -191,38 +217,37 @@ class DataParser():
         # 4. Check WHOIS to verify target not player
         # 5. If above checks succeded, it's a charm!
 
-       
         # If its attacking one of our beloved pets, it can't possibly be a charm!
         if target in mpPets or target in cratPets or target in engPets:
             return False
-    
+
         # Attacking the logger, not caught by isPlayer
         if target == "?You" or name == "?You":
             return False
-    
+
         # Check if the attacker has a player name, if so, it's not a charm.
         if re.match(self.isPlayer, name):
             return False
-        
+
         # Check if it's attacking a player, if so: Fail!
         if re.match(self.isPlayer, target):
             return False
-            
 
         # Check whois to see if its attacking a player (double-check)
         # If its a player, FAIL
         if self.w.whois(target, self.dim)[0] != "Mob?":
             return False
-    
+
         # All checks passed
         return True
-    
-    
+
+
     def addGotHeal(self, healer, amount):
         pass
+
     def addDidHeal(self, healer, amount):
         pass
-    
+
     # Initialize a new toon into the data dictionary
     def initToon(self, name):
         init = {}
@@ -245,7 +270,7 @@ class DataParser():
         init["specdmg"]       = {}
         init["whois"]         = ("Mob?", "?", 0)    # Wanna store it when passing data to UI
                                                     # Avoids calling whois in too many threads
-        
+
         self.globData[name] = init
 
     def isBadPet(self, petname):
@@ -256,10 +281,10 @@ class DataParser():
     def addDamage(self, name, target, amount, type = "Unknown", selfPet = False):
         isCharm = False
         isPet = False
-        
+
         if amount == "1" and type == "nano": return # Ignore mongo, etc
         if name == "Someone": return                # Can't be assigned to anyone
-        
+
         # If this is a pet, set the damage dealer as self.
         # If this is a charm, also store the {..?}
         # Note: selfPet and isPet are distinct pet types, as "isPet" is of unknown owner.
@@ -269,33 +294,27 @@ class DataParser():
                 charmName = name
                 isCharm = True
                 #print "Detected %s as a charmed pet" % name
-            
+
             # Detect invalid pet damage (pet hit by enemy)
             # Debug output only!
             if not name in allPets and name != self.selfname:
                 if self.isBadPet(name):
                     #print "REMOVED: selfpet '%s' is bad data (attacking %s)" % (name, target)
                     return
-                
+
             # if selfPet:
             name = "?You"
             isPet = True
-            
-            
-            
+
         # Correct the 'You' to internal '?You'
         if name == "You": name = "?You"
         if target.lower() == "you":
             target = "?You"
-    
 
-
-    
         # List of specials for type comparison
         amount = int(amount)
         specials = ('Backstab', 'Full Auto', 'Brawling', 'Burst', 'Fast Attack', 'Sneak Attack', 'Dimach', 'Fling Shot', 'Aimed Shot')
-    
-    
+
         # ######################    
         # Deal with pets here
         # Skip charm if its already detected
@@ -304,25 +323,22 @@ class DataParser():
         elif name in engPets:   isPet = True
         elif not isCharm:       isCharm = self.isCharmedMob(name, target)
 
-    
         # Record tanking stats
         if re.match(self.isPlayer, target) or target == '?You':
             try:                self.globData["?Tanks"][target] += amount
             except KeyError:    self.globData["?Tanks"][target] = amount
             #print "Unit:{0} got hit for:{1}, now taken:{2} damage.".format(target, amount, self.globData["?Tanks"][target])
-            
-            
+
         # For the rest of the function, a player or pet is assumed.
         # Return now if this is a mob
         if not re.match(self.isPlayer, name) and name != '?You' and not isPet and not isCharm:
             if not self.allowMobs:
                 return
-        
+
         # Iitialize a new user if needed
         if not name in self.globData:
             self.initToon(name)
 
-    
         # Add to global statistics, and pet data if needed
         # NOTE: selfPet is not the same as isPet (others)
         if selfPet and isCharm:
@@ -331,7 +347,7 @@ class DataParser():
             self.globData[name]["dmg"] += amount
             self.globStats["TOTALDMG"] += amount
             #print "yarrr", name, target
-        
+
         elif selfPet:
             self.globData[name]["pets"] += amount
             self.globData[name]["dmg"] += amount
@@ -341,13 +357,12 @@ class DataParser():
             self.globData[name]["dmg"] += amount
             self.globStats["TOTALDMG"] += amount            # Total damage dealt by all players
             self.globStats["TOTALHITS"] += 1                # Number of hits dealt by all players (including reflect/ddshield)
-        
+
         # Track how many times you've been hit
         if target == "You" or target == "?You":
             try:                self.globStats["GOTHIT"] += 1
             except KeyError:    self.globStats["GOTHIT"] = 1
-        
-        
+
         # Track statistics when specials used
         # TODO: It seems it detects fling, but not fling+FA? doesnt he burst?
         if type in specials:
@@ -358,7 +373,7 @@ class DataParser():
             except KeyError:
                 self.globData[name]["spec"][type] = 1
                 self.globData[name]["specdmg"][type] = amount                
-        
+
         # Grab min/max damage dealt in single hits for statistical purposes
         if type not in ('reflect', 'dmgShield'):
             if amount > self.globData[name]["highnum"]:
@@ -373,36 +388,34 @@ class DataParser():
                 self.globData[name][type] += amount
             else:
                 self.globData[name][type] = amount 
-            
-        
+
         # Grab number of weapon hits (includes crits)
         hitIncrease = ("crit", "normal",'glancing', 'fire', 'cold', 'chemical', 'radiation', 'melee', 'projectile', 'energy', 'poison')
         if type in hitIncrease:
             self.globData[name]["hits"] += 1
-            
+
         # Nano hit stats (seperate from weapons)
         if type == 'nano':
             self.globData[name]["nano"] += amount
             self.globData[name]["nanohits"] += 1
             self.globStats['TOTALNHITS'] += 1
-        
+
         # Crit stats, number of crits etc.
         if type == 'crit':
             self.globData[name]["critAmount"] += amount
             self.globData[name]["critHits"] += 1
-         
+
         # Glancing stats, number of glances etc.
         if type == 'glancing':
             self.globData[name]["glanceAmount"] += amount
             self.globData[name]["glanceHits"] += 1
-            
-       
+
+
     # Toons % Damage of team-total
     def toPercToonDmg(self, Toon):
         return (self.globData[Toon]["dmg"]*100) / self.globStats["TOTALDMG"]
 
 
-    
     # Exclude trash data from tanking stats
     def fixTankData(self):
         tankdmg = 1.0 #Div0
@@ -411,31 +424,31 @@ class DataParser():
             if Toon == '?You':
                 tankdmg += self.globData["?Tanks"][Toon]
                 continue
-            
+
             # Remove mobs, don't want their tanking stats (nor charms)
             w = self.w.whois(Toon, self.dim)
             if w[0] == "Mob?":
                 dlist.append(Toon)
                 #print w[0], "is obviously a mob",Toon
                 continue
-             
+
             # Count up total damage taken on all toons
             tankdmg += self.globData["?Tanks"][Toon]
         #print self.globData['?Tanks']
         #print "[Proces.] Total tank dmg: {0}".format(tankdmg)
-    
-    
+
         # Doing it after mob-check, not to include mob sustained dmg
         for Toon in self.globData["?Tanks"]: 
             if (self.globData["?Tanks"][Toon] / tankdmg)*100 < 5:
                 print "[Proces.] Removed toon {0} from tanking stats.. taken {1} of {2} dmg.".format(Toon, self.globData["?Tanks"][Toon], tankdmg)
                 print ">>>", (self.globData["?Tanks"][Toon] / tankdmg)*100
                 dlist.append(Toon)
-    
+
         # Remove toons from tanklist    
         for Toon in dlist: 
             try: del self.globData["?Tanks"][Toon]
             except: pass
+
 
     def postProcess(self, data):
         """
@@ -500,12 +513,12 @@ def GetPeriod(data):
     @return: (start, stop, duration) 
     """
     if len(data) < 1: return 0, 1, 1
-	
+    
     start = -1
     for D in reversed(data):
-		try: start = D["TS"]
-		except KeyError: continue
-		
+        try: start = D["TS"]
+        except KeyError: continue
+        
     if start == -1: return 0, 1, 1
     stop = int(time.time())
         
@@ -514,10 +527,8 @@ def GetPeriod(data):
         start, stop = stop, start
         
     return start, stop, (stop-start)
-    
-    
 
-            
+
 # Assign petnames to owners, if possible
 def AssignPetDmg(Petlist, Professions, DPClass, Class, IgnoreName = "??Invalid??Name??"): 
 
@@ -526,7 +537,7 @@ def AssignPetDmg(Petlist, Professions, DPClass, Class, IgnoreName = "??Invalid??
     ProflistCopy = Professions[Class][:]
     if IgnoreName in ProflistCopy:
         ProflistCopy.remove(IgnoreName)
-    
+
     # One [petprof], assign as the owner
     if len(ProflistCopy) != 1: 
         return Petlist
@@ -537,7 +548,7 @@ def AssignPetDmg(Petlist, Professions, DPClass, Class, IgnoreName = "??Invalid??
         DPClass.globData[Toon]["pets"] += DPClass.globData[pet]["dmg"] 
         DPClass.globData[Toon]["dmg"]  += DPClass.globData[pet]["dmg"]
         print "[Proces.] Assigned Pet '%s' to player '%s'" % (pet, Toon)
-        
+
     # Drop pet from damage dump, since it has an owner
     for Pet in Petlist:
         del DPClass.globData[Pet]
@@ -557,29 +568,27 @@ def AssignCharmDmg(Moblist, Bureaucrats, DPClass, IgnoreName = "??Invalid??Name?
     Limitation: One crat that isnt the player/parser
     """  
     if not len(Moblist): return Moblist
-    
+
     # Remove self, if the list contains the user.
     # User-charms are listed as real pets.
     Toonlist = Bureaucrats[:]
     if IgnoreName in Toonlist: Toonlist.remove(IgnoreName)
     if 'Bartender' in Toonlist: Toonlist.remove(IgnoreName)
     if 'Guard' in Toonlist: Toonlist.remove(IgnoreName)
-    
+
     # Can only handle charms for a single bureaucrat
     if len(Toonlist) != 1:
         return Moblist
-    
+
     # Charms are not initialized for most players
     Toon = Toonlist[0]
     try: DPClass.globData[Toon]["charms"]
     except KeyError: DPClass.globData[Toon]["charms"] = 0
-    
-    
+
     for charm in Moblist:
         DPClass.globData[Toon]["charms"] += DPClass.globData[charm]["dmg"] 
         DPClass.globData[Toon]["dmg"]  += DPClass.globData[charm]["dmg"]
         print "[Proces.] Assigned charm damage to '%s'" % Toon
-        
 
     for Charm in Moblist:
         del DPClass.globData[Charm]
@@ -593,12 +602,11 @@ def AssignCharmDmg(Moblist, Bureaucrats, DPClass, IgnoreName = "??Invalid??Name?
 # TUDO: Move much of this into the DataParser class
 def SumParsedData(data, selfname, dimension, startTime, allowMobs = False, allowLowdmg = False):
     print "[Proces.] Processing %d items " % len(data)
-    
+
     P = DataParser(selfname, dimension, allowMobs)
     P.period = (startTime, int(time.time()), int(time.time())-startTime)
     P.postProcess(data)
-            
-    
+
     # At this point the globData dict should be fully populated
     # Time for linking pets to players, counting profs and excluding bad data.
     Professions = {'Adventurer':[], 'Agent':[], 'Bureaucrat':[], 'Doctor':[], 'Enforcer':[], 'Engineer':[], 'Fixer':[], 'Keeper':[], 'Martial Artist':[], 'Meta-Physicist':[], 'Nano-Technician':[], 'Shade':[], 'Soldier':[], 'Trader':[], 'Unknown':[]}
@@ -607,29 +615,25 @@ def SumParsedData(data, selfname, dimension, startTime, allowMobs = False, allow
     MPPets = []
     EngPets = []
     LowPlayers = []     # Did not meet minimum damage req
-    
-    
 
     # Set a name to self, allowing for whois and such.
     # Mainly needed for charms :: There is a chance you did no hits!
     try:
         P.globData[selfname] = P.globData["?You"]
         del P.globData["?You"]
-        
+
         P.globData['?Tanks'][selfname] = P.globData['?Tanks']['?You']
         del P.globData['?Tanks']['?You']
         #print globData[selfname]
     except KeyError:
         pass
-    
 
     # Ignore certain mob names such as "Guard" and "Fanatic"
     # Otherwise detected as players.
     for name in badNames:
         if name in P.globData:
             del P.globData[name]
-    
-    
+
     for Toon in P.globData:
         if Toon == "?Tanks":
             continue
@@ -638,7 +642,7 @@ def SumParsedData(data, selfname, dimension, startTime, allowMobs = False, allow
         if Toon in cratPets:            CratPets.append(Toon)
         elif Toon in mpPets:            MPPets.append(Toon)
         elif Toon in engPets:           EngPets.append(Toon)
-        
+
         # Player
         else:
             """
@@ -652,41 +656,32 @@ def SumParsedData(data, selfname, dimension, startTime, allowMobs = False, allow
             if w[0] == "Mob?" and not allowMobs:
                 print "[Proces.] Classify(Mob): '%s'" % Toon
                 NPC.append(Toon)
-                
-               
+
             # Only grab players who's done at least x% of total damage
             # Always grab the parsing player.
             elif (P.toPercToonDmg(Toon) >= 2 or allowLowdmg) or Toon == selfname:
                 Professions[w[1]].append(Toon)  # Increase profession count
                 print "[Proces.] Classify(AddPlayer): %s with %g%% damage" % (Toon, P.toPercToonDmg(Toon))
-                
+
             else:
                 print "[Proces.] Classify(IgnoredPlayer): %s with only %g%% damage" % (Toon, P.toPercToonDmg(Toon)) 
-                LowPlayers.append(Toon)        
+                LowPlayers.append(Toon)
     # End: For Toon
-    
-    
+
     # Exclude NPCs from tanks, and people with too low sustained damage.
     P.fixTankData()
-
-
-
 
     # Sum up profession damage
     for Prof in Professions:
         for Toon in Professions[Prof]:
             P.globStats["?Prof"][Prof] += P.globData[Toon]["dmg"]
 
-
-
-
     # Assign pet damage to their respective owners, and remove them as a seperate player
     print "[Proces.] Assigning pets to owners:", EngPets, CratPets, MPPets
     EngPets  = AssignPetDmg(EngPets,  Professions, P, "Engineer", selfname) 
     CratPets = AssignPetDmg(CratPets, Professions, P, "Bureaucrat", selfname)
     MPPets   = AssignPetDmg(MPPets,   Professions, P, "Meta-Physicist", selfname)
-    
-    
+
     """
     # Raid test, etc
     for i in xrange(32):
@@ -696,9 +691,7 @@ def SumParsedData(data, selfname, dimension, startTime, allowMobs = False, allow
         P.globData["TestToon%d"%i]["nanoHits"] = 1300
         P.globData["TestToon%d"%i]["nano"] = 500000
    """
-   
-   
-    
+
     # Assign charm damage to crats
     # Any unhandled NPCs will be listed as player "Charms" (if there are any crats)
     NPC = AssignCharmDmg(NPC, Professions['Bureaucrat'], P, selfname)
@@ -728,13 +721,13 @@ def SumParsedData(data, selfname, dimension, startTime, allowMobs = False, allow
             print "[Proces.] Renamed: Charm/OddPet: %s (%d dmg)" % (C, P.globData[C]["dmg"])
             P.globData[":%s:" % C] = P.globData[C]
             del P.globData[C]
-    
+
     # Delete anyone that has not yet been processed (hopefully mobs)
     for C in NPC:
         if C in P.globData:
             print "[Proces.] Deleting mob: %s (%d dmg)" % (C, P.globData[C]["dmg"])
             del P.globData[C]
-         
+
     print "[Proces.] Number of pets (other): %d" % (len(EngPets)+len(CratPets)+len(MPPets))
     for Prof in Professions:
         if len(Professions[Prof]):
@@ -747,13 +740,10 @@ def SumParsedData(data, selfname, dimension, startTime, allowMobs = False, allow
             print "[Proces.] ReClassify(AddPlayer): %s (%d dmg)" % (Player, P.globData[Player]["dmg"])
             continue 
         del P.globData[Player]
-        
+
     print "[Proces.] Entries: ",
     for Player in P.globData:
         print "'%s'," % Player, 
     print
-        
+
     return P
-
-
-
