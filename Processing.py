@@ -63,7 +63,12 @@ restrictedPets = {
     (175, "Urolok the Rotten"),
     (201, "Ettu the Cursed"), # Bugged in 18.8.2, should not be 201, but possibly 190-195
     (201, "Zhok the Abomination"),
-    (220, "The Rihwen"))
+    (220, "The Rihwen")),
+    'Trader':(
+    (220, "VP - Marketing"),
+    (220, "VP - Public Relations"),
+    (220, "VP - Operations"),
+    (220, "VP - Internal Affairs"))
 }
 
 # Default pet names, for connecting pets with professions/players
@@ -79,27 +84,30 @@ cratPets = ("Basic Worker-Droid",       "Limited Worker-Droid",           "Faith
             "Carlita Desposito",        "Corporate Guardian",             "CEO Guardian",                    "Carlo Pinnetti"
             )
 
-engPets = ("Feeble Automaton",            "Patchwork Automaton",             "Lesser Automaton",                 "Inferior Automaton",         "Flawed Automaton",               "Common Automaton",                "Automaton",        "Upgraded Automaton",              "Advanced Automaton",       "Perfected Automaton",       "Semi-Sentient Automaton",
-            "Feeble Android",             "Patchwork Android",               "Lesser Android",                   "Inferior Android",           "Flawed Android",                 "Common Android",                  "Android",          "Upgraded Android",                "Advanced Android",         "Perfected Android",         "Semi-Sentient Android",
-            "Feeble Gladiatorbot",        "Patchwork Gladiatorbot",          "Lesser Gladiatorbot",              "Inferior Gladiatorbot",      "Flawed Gladiatorbot",            "Common Gladiatorbot",             "Gladiatorbot",     "Upgraded Gladiatorbot",           "Advanced Gladiatorbot",    "Perfected Gladiatorbot",    "Semi-Sentient Gladiatorbot",
-            "Feeble Guardbot",            "Patchwork Guardbot",              "Lesser Guardbot",                  "Inferior Guardbot",          "Flawed Guardbot",                "Common Guardbot",                 "Guardbot",         "Upgraded Guardbot",               "Advanced Guardbot",        "Perfected Guardbot",        "Semi-Sentient Guardbot",
-            "Feeble Warbot",              "Patchwork Warbot",                "Lesser Warbot",                    "Inferior Warbot",            "Flawed Warbot",                  "Common Warbot",                   "Warbot",           "Upgraded Warbot",                 "Advanced Warbot",          "Perfected Warbot",          "Semi-Sentient Warbot",          "Military-Grade Warbot",
-            "Feeble Warmachine",          "Patchwork Warmachine",            "Lesser Warmachine",                "Inferior Warmachine",        "Flawed Warmachine",              "Common Warmachine",               "Warmachine",       "Upgraded Warmachine",             "Advanced Warmachine",      "Perfected Warmachine",      "Semi-Sentient Warmachine",      "Military-Grade Warmachine",
-            "Decommissioned Wardroid",    "Reactivated Wardroid",            "Semi-Sentient Wardroid",
-            "Slayerdroid Protector",      "Slayerdroid Warden",              "Slayerdroid Sentinel",             "Slayerdroid Guardian",       "Slayerdroid Annihilator",
-            "Devastator Drone",           "Battlefield Devastator Drone",    "Fieldsweeper Devastator Drone",    "Desolator Assault Drone",    "Widowmaker Battle Drone",
-            "Prototype Predator M-30",    "Predator M-30",                   "Upgraded Predator M-30",           "Advanced Predator M-30",     "Semi-Sentient Predator M-30",    "Military-Grade Predator M-30",    "Marauder M-45",    "Military-Grade Marauder M-45",    "Ravening M-60"
-            )
+engPets = ("Feeble Automaton",           "Patchwork Automaton",             "Lesser Automaton",                 "Inferior Automaton",         "Flawed Automaton",               "Common Automaton",                "Automaton",        "Upgraded Automaton",              "Advanced Automaton",       "Perfected Automaton",       "Semi-Sentient Automaton",
+           "Feeble Android",             "Patchwork Android",               "Lesser Android",                   "Inferior Android",           "Flawed Android",                 "Common Android",                  "Android",          "Upgraded Android",                "Advanced Android",         "Perfected Android",         "Semi-Sentient Android",
+           "Feeble Gladiatorbot",        "Patchwork Gladiatorbot",          "Lesser Gladiatorbot",              "Inferior Gladiatorbot",      "Flawed Gladiatorbot",            "Common Gladiatorbot",             "Gladiatorbot",     "Upgraded Gladiatorbot",           "Advanced Gladiatorbot",    "Perfected Gladiatorbot",    "Semi-Sentient Gladiatorbot",
+           "Feeble Guardbot",            "Patchwork Guardbot",              "Lesser Guardbot",                  "Inferior Guardbot",          "Flawed Guardbot",                "Common Guardbot",                 "Guardbot",         "Upgraded Guardbot",               "Advanced Guardbot",        "Perfected Guardbot",        "Semi-Sentient Guardbot",
+           "Feeble Warbot",              "Patchwork Warbot",                "Lesser Warbot",                    "Inferior Warbot",            "Flawed Warbot",                  "Common Warbot",                   "Warbot",           "Upgraded Warbot",                 "Advanced Warbot",          "Perfected Warbot",          "Semi-Sentient Warbot",          "Military-Grade Warbot",
+           "Feeble Warmachine",          "Patchwork Warmachine",            "Lesser Warmachine",                "Inferior Warmachine",        "Flawed Warmachine",              "Common Warmachine",               "Warmachine",       "Upgraded Warmachine",             "Advanced Warmachine",      "Perfected Warmachine",      "Semi-Sentient Warmachine",      "Military-Grade Warmachine",
+           "Decommissioned Wardroid",    "Reactivated Wardroid",            "Semi-Sentient Wardroid",
+           "Slayerdroid Protector",      "Slayerdroid Warden",              "Slayerdroid Sentinel",             "Slayerdroid Guardian",       "Slayerdroid Annihilator",
+           "Devastator Drone",           "Battlefield Devastator Drone",    "Fieldsweeper Devastator Drone",    "Desolator Assault Drone",    "Widowmaker Battle Drone",
+           "Prototype Predator M-30",    "Predator M-30",                   "Upgraded Predator M-30",           "Advanced Predator M-30",     "Semi-Sentient Predator M-30",    "Military-Grade Predator M-30",    "Marauder M-45",    "Military-Grade Marauder M-45",    "Ravening M-60"
+           )
 
 # In 18.7 MP pets became scalable, with simplified names, Ex. Fiend -> Metaphysical Demon, Transcendent Enmity Personification -> Enmity Personification
 mpPets = ("Anger Manifestation",    "Fury Externalization",    "Rage Materialization",    "Wrath Incarnation",    "Frenzy Embodiment",    "Enmity Personification",
-            "Praetorian Legionnaire",    "Tormented Revenant",
-            "Metaphysical Demon",
-            "Biazu the Vile",    "Urolok the Rotten",    "Ettu the Cursed",    "Zhok the Abomination",    "The Rihwen"
-            )
+          "Praetorian Legionnaire",    "Tormented Revenant",
+          "Metaphysical Demon",
+          "Biazu the Vile",    "Urolok the Rotten",    "Ettu the Cursed",    "Zhok the Abomination",    "The Rihwen"
+          )
+
+tradPets = ("VP - Marketing",    "VP - Public Relations",    "VP - Operations",    "VP - Internal Affairs"
+             )
 
 badNames = ("Guard",                 "Fanatic",                "Bartender",                "Cultist")
-allPets = cratPets + engPets + mpPets 
+allPets = cratPets + engPets + mpPets +tradPets
 
 
 def getMatch(data):
@@ -218,7 +226,7 @@ class DataParser():
         # 5. If above checks succeded, it's a charm!
 
         # If its attacking one of our beloved pets, it can't possibly be a charm!
-        if target in mpPets or target in cratPets or target in engPets:
+        if target in mpPets or target in cratPets or target in engPets or target in tradPets:
             return False
 
         # Attacking the logger, not caught by isPlayer
@@ -318,10 +326,11 @@ class DataParser():
         # ######################    
         # Deal with pets here
         # Skip charm if its already detected
-        if name in mpPets:      isPet = True
-        elif name in cratPets:  isPet = True
-        elif name in engPets:   isPet = True
-        elif not isCharm:       isCharm = self.isCharmedMob(name, target)
+        if name in mpPets: isPet = True
+        elif name in cratPets: isPet = True
+        elif name in engPets: isPet = True
+        elif name in tradPets: isPet = True
+        elif not isCharm: isCharm = self.isCharmedMob(name, target)
 
         # Record tanking stats
         if re.match(self.isPlayer, target) or target == '?You':
@@ -614,6 +623,7 @@ def SumParsedData(data, selfname, dimension, startTime, allowMobs = False, allow
     CratPets = []       # Warning similarly named lists! (name lists vs actual pets)
     MPPets = []
     EngPets = []
+    TradPets = []
     LowPlayers = []     # Did not meet minimum damage req
 
     # Set a name to self, allowing for whois and such.
@@ -642,6 +652,7 @@ def SumParsedData(data, selfname, dimension, startTime, allowMobs = False, allow
         if Toon in cratPets:            CratPets.append(Toon)
         elif Toon in mpPets:            MPPets.append(Toon)
         elif Toon in engPets:           EngPets.append(Toon)
+        elif Toon in tradPets:         TradPets.append(Toon)
 
         # Player
         else:
@@ -677,10 +688,11 @@ def SumParsedData(data, selfname, dimension, startTime, allowMobs = False, allow
             P.globStats["?Prof"][Prof] += P.globData[Toon]["dmg"]
 
     # Assign pet damage to their respective owners, and remove them as a seperate player
-    print "[Proces.] Assigning pets to owners:", EngPets, CratPets, MPPets
-    EngPets  = AssignPetDmg(EngPets,  Professions, P, "Engineer", selfname) 
+    print "[Proces.] Assigning pets to owners:", EngPets, CratPets, MPPets, TradPets
+    EngPets  = AssignPetDmg(EngPets, Professions, P, "Engineer", selfname) 
     CratPets = AssignPetDmg(CratPets, Professions, P, "Bureaucrat", selfname)
-    MPPets   = AssignPetDmg(MPPets,   Professions, P, "Meta-Physicist", selfname)
+    MPPets = AssignPetDmg(MPPets, Professions, P, "Meta-Physicist", selfname)
+    TradPets = AssignPetDmg(TradPets, Professions, P, "Trader", selfname)
 
     """
     # Raid test, etc
@@ -728,7 +740,7 @@ def SumParsedData(data, selfname, dimension, startTime, allowMobs = False, allow
             print "[Proces.] Deleting mob: %s (%d dmg)" % (C, P.globData[C]["dmg"])
             del P.globData[C]
 
-    print "[Proces.] Number of pets (other): %d" % (len(EngPets)+len(CratPets)+len(MPPets))
+    print "[Proces.] Number of pets (other): %d" % (len(EngPets)+len(CratPets)+len(MPPets)+len(TradPets))
     for Prof in Professions:
         if len(Professions[Prof]):
             print "[Proces.] %ss" % Prof , Professions[Prof]
