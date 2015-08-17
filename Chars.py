@@ -1,4 +1,5 @@
 ﻿import sqlite3, re, os, sys
+from operator import itemgetter
 from DebugSettings import Build_Version, Build_ID
 import threading, time
 
@@ -110,12 +111,10 @@ def getAppdataFolders():
     path = os.path.join(appdata, "..", "Local", "Funcom", "")
     folders = []
     for root, dirs, files in os.walk(path):
-        a = os.path.basename(root).lower() == "prefs"
-        b = os.access(os.path.join(root, "prefs.xml"), os.R_OK)
-        if a and b:
+        path = os.access(os.path.join(root, "Prefs", "prefs.xml"), os.R_OK)
+        if path:
             folders.append(root)
-            return folders
-    return ""
+    return folders
 
 
 '''
@@ -280,8 +279,8 @@ def LoadToonsDB():
     for id, nick, active, acc, dimension in __SQL:
         # Check if the acc\id folder really exists, if not: disable it.
         if active:
-            for prefsfolders in getAppdataFolders():
-                path = "%s\\%s\\Char%d" % (prefsfolders, acc, id)
+            for appdatafolders in getAppdataFolders():
+                path = "%s\\Prefs\\%s\\Char%d" % (appdatafolders, acc, id)
                 if not os.access(path, os.F_OK): active = False
 
         # Dimension may not be set for older DBs
@@ -326,13 +325,13 @@ def GetAccFromID(initialize, filter = []):
 
     out = {}
     pathList = []
-    for prefsfolders in getAppdataFolders():
-        #Path = os.path.join(prefsfolders, "prefs")
+    for appdatafolders in getAppdataFolders():
+        #Path = os.path.join(appdatafolders, "prefs")
 
-        dirPrefs = os.listdir(prefsfolders)
+        dirPrefs = os.listdir(appdatafolders)
 		#print "[Chars  ] Loading toons in path: %s" % Path
         for Account in dirPrefs:
-            pathToons = os.path.join(prefsfolders, Account)
+            pathToons = os.path.join(appdatafolders,"Prefs", Account)
             if not os.path.isdir( pathToons ): continue
             dirToons = os.listdir(pathToons)
 
@@ -414,10 +413,9 @@ def LoadConfig():
 def GetLogfilePath(accname, id):
     pathList = []
     # Regular prefs
-    logPath = os.path.join(accname, "Char%d"%id, "Chat", "Windows", "WindowDCDump", "log.txt")
-    for prefsfolders in getAppdataFolders():
-        pathtoprefs = os.path.join(prefsfolders, logPath)
-        if os.access(pathtoprefs, os.F_OK): pathList.append(pathtoprefs)
+    for appdatafolders in getAppdataFolders():
+        logPath = os.path.join(appdatafolders, "Prefs", accname, "Char%d"%id, "Chat", "Windows", "WindowDCDump", "log.txt")
+        if os.access(logPath, os.F_OK): pathList.append(logPath)
 
         if len(pathList) == 0: return None
         if len(pathList) == 1: return pathList[0]
@@ -436,9 +434,9 @@ def getLatestLog(toonlist):
     """
     dataset = []
     # Get the newest logfile ID
-    for prefsfolders in getAppdataFolders():
+    for appdatafolders in getAppdataFolders():
         for accname, id in toonlist:
-            path = os.path.join(prefsfolders, "prefs", accname, "Char%d"%id, "Chat", "Windows", "WindowDCDump", "log.txt")
+            path = os.path.join(appdatafolders, "Prefs", accname, "Char%d"%id, "Chat", "Windows", "WindowDCDump", "log.txt")
             dataset.append( (os.path.getmtime(path), id) )
 
     # Grab highest timestamp

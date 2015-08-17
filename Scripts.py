@@ -456,22 +456,22 @@ class Script():
         
 
         # Make sure the scripts folder exists
-        for prefsfolders in getAppdataFolders():
-            prefsfolders = os.path.join(prefsfolders, "scripts")
-            if not os.access(prefsfolders, os.F_OK):
+        for appdatafolders in getAppdataFolders():
+            appdatafolders = os.path.join(appdatafolders, "scripts")
+            if not os.access(appdatafolders, os.F_OK):
                 try: 
-                    print "[Scripts] Making dir %s" % prefsfolders
+                    print "[Scripts] Making dir %s" % appdatafolders
                     os.makedirs( "dcDumps" )
                 except:
-                    print "[Scripts] Failed creating scripts dir at: %s" % prefsfolders 
+                    print "[Scripts] Failed creating scripts dir at: %s" % appdatafolders 
                     return False
             
-            if not os.access(os.path.join(prefsfolders, "dcDumps"), os.F_OK):
+            if not os.access(os.path.join(appdatafolders, "scripts", "dcDumps"), os.F_OK):
                 try: 
-                    print "[Scripts] Making dir %s" % os.path.join(prefsfolders, "dcDumps")
-                    os.makedirs( os.path.join(prefsfolders, "dcDumps") )
+                    print "[Scripts] Making dir %s" % os.path.join(appdatafolders, "dcDumps")
+                    os.makedirs( os.path.join(appdatafolders, "scripts", "dcDumps") )
                 except:
-                    print "[Scripts] Failed creating scripts dir at: %s" % prefsfolders 
+                    print "[Scripts] Failed creating scripts dir at: %s" % appdatafolders 
                     return False
             
 
@@ -497,42 +497,42 @@ class Script():
 
         
         
-            #if not os.access(os.path.join(prefsfolders, "dcBoth"), os.F_OK):
-            if not self.WriteScripts(os.path.join(prefsfolders,"dcBoth"),   prefix+"/dcDumps/dcBoth1"):    
+            #if not os.access(os.path.join(appdatafolders, scripts",  "dcBoth"), os.F_OK):
+            if not self.WriteScripts(os.path.join(appdatafolders, "scripts", "dcBoth"),   prefix+"/dcDumps/dcBoth1"):    
                 return False
-            if not os.access(os.path.join(prefsfolders, "dcBothe"), os.F_OK):
-                if not self.WriteScripts(os.path.join(prefsfolders,"dcBothe"),  "/dcDumps/dcBothe1"):   
+            if not os.access(os.path.join(appdatafolders, "scripts",  "dcBothe"), os.F_OK):
+                if not self.WriteScripts(os.path.join(appdatafolders, "scripts", "dcBothe"),  "/dcDumps/dcBothe1"):   
                     return False
-            #if not os.access(os.path.join(prefsfolders, "dcRaid"), os.F_OK):
-            if not self.WriteScripts(os.path.join(prefsfolders,"dcRaid"),   prefix+"/dcDumps/dcRaid1"):    
+            #if not os.access(os.path.join(appdatafolders, "scripts",  "dcRaid"), os.F_OK):
+            if not self.WriteScripts(os.path.join(appdatafolders, "scripts", "dcRaid"),   prefix+"/dcDumps/dcRaid1"):    
                 return False
-            if not os.access(os.path.join(prefsfolders, "dcRaide"), os.F_OK):
-                if not self.WriteScripts(os.path.join(prefsfolders,"dcRaide"),   "/dcDumps/dcRaide1"):  
+            if not os.access(os.path.join(appdatafolders, "scripts",  "dcRaide"), os.F_OK):
+                if not self.WriteScripts(os.path.join(appdatafolders, "scripts", "dcRaide"),   "/dcDumps/dcRaide1"):  
                     return False
-            #if not os.access(os.path.join(prefsfolders, "dcDump"), os.F_OK):
-            if not self.WriteScripts(os.path.join(prefsfolders,"dcDump"),   prefix+"/dcDumps/dcDump1"):    
+            #if not os.access(os.path.join(appdatafolders, "scripts",  "dcDump"), os.F_OK):
+            if not self.WriteScripts(os.path.join(appdatafolders, "scripts", "dcDump"),   prefix+"/dcDumps/dcDump1"):    
                 return False
         
-            if not os.access(os.path.join(prefsfolders, "dcDumpe"), os.F_OK):
-                if not self.WriteScripts(os.path.join(prefsfolders,"dcDumpe"),  "/dcDumps/dcDumpe1"):   
+            if not os.access(os.path.join(appdatafolders, "scripts",  "dcDumpe"), os.F_OK):
+                if not self.WriteScripts(os.path.join(appdatafolders, "scripts", "dcDumpe"),  "/dcDumps/dcDumpe1"):   
                     return False
             
-            #if not self.WriteScripts(os.path.join(prefsfolders,"dcExp"),         self.getDcExp(stats, dates, ptime)):    return False
-            if not self.WriteScripts(os.path.join(prefsfolders,"dcExpe"),   "/text "+  self.getDcExp(stats, dates, ptime)):    return False
-            if not self.WriteScripts(os.path.join(prefsfolders,"dcProfs"),   prefix+   self.getDcProfs(stats, dates, ptime)):  return False
-            if not self.WriteScripts(os.path.join(prefsfolders,"dcProfse"), "/text "+  self.getDcProfs(stats, dates, ptime)):  return False
-            if not self.WriteScripts(os.path.join(prefsfolders,"dcTank"),   prefix+    self.getDcTank(data, dates, ptime)):    return False
-            if not self.WriteScripts(os.path.join(prefsfolders,"dcTanke"),  "/text "+  self.getDcTank(data, dates, ptime)):    return False 
+            #if not self.WriteScripts(os.path.join(appdatafolders, "scripts", "dcExp"),         self.getDcExp(stats, dates, ptime)):    return False
+            if not self.WriteScripts(os.path.join(appdatafolders, "scripts", "dcExpe"),   "/text "+  self.getDcExp(stats, dates, ptime)):    return False
+            if not self.WriteScripts(os.path.join(appdatafolders, "scripts", "dcProfs"),   prefix+   self.getDcProfs(stats, dates, ptime)):  return False
+            if not self.WriteScripts(os.path.join(appdatafolders, "scripts", "dcProfse"), "/text "+  self.getDcProfs(stats, dates, ptime)):  return False
+            if not self.WriteScripts(os.path.join(appdatafolders, "scripts", "dcTank"),   prefix+    self.getDcTank(data, dates, ptime)):    return False
+            if not self.WriteScripts(os.path.join(appdatafolders, "scripts", "dcTanke"),  "/text "+  self.getDcTank(data, dates, ptime)):    return False 
 
             # /dc command    
-            if not self.WriteScripts(prefsfolders+"\\dc",  "/text "+       self.getDcHelp(online)): return False
+            if not self.WriteScripts(appdatafolders+"scripts\\dc",  "/text "+       self.getDcHelp(online)): return False
             if online:
-                if not self.WriteScripts( os.path.join(prefsfolders, "dcStatus"),  "/text DCDump is <font color=green>currently parsing!</font>"): return False
+                if not self.WriteScripts( os.path.join(appdatafolders, "scripts",  "dcStatus"),  "/text DCDump is <font color=green>currently parsing!</font>"): return False
             else:
-                if not self.WriteScripts( os.path.join(prefsfolders, "dcStatus"),  "/text DCDump is <font color=red>not parsing!</font>"): return False
+                if not self.WriteScripts( os.path.join(appdatafolders, "scripts",  "dcStatus"),  "/text DCDump is <font color=red>not parsing!</font>"): return False
         
             # Subfolder scripts
-            pathToDumps = os.path.join(prefsfolders, "dcDumps")
+            pathToDumps = os.path.join(appdatafolders, "scripts",  "dcDumps")
             #if not os.access(pathToDumps, os.F_OK):
             #    os.makedirs(pathToDumps)
             
@@ -543,7 +543,7 @@ class Script():
             for i in xrange(1, len(raidData)):
                 raidout += "/dcDumps/dcRaide%d\n"%i
             """
-            #self.WriteScripts(prefsfolders+"\\dcRaide", raidout);
+            #self.WriteScripts(appdatafolders+"scripts\\dcRaide", raidout);
             
             i = 1
             scriptData = self.getRaidData(data, dates, ptime)
@@ -582,8 +582,8 @@ class Script():
 
 
     def AddOnlineStatus(self, online):
-        for prefsfolders in getAppdataFolders():
-            if not os.access(prefsfolders, os.F_OK):
+        for appdatafolders in getAppdataFolders():
+            if not os.access(appdatafolders, os.F_OK):
                 print "[Scripts] Error: Could not find a scripts folder with access rights"
                 return False
         
@@ -593,21 +593,21 @@ class Script():
                 od = "/text DCDump is <font color=red>not parsing!</font>"
 
             # /dc command
-            if not self.WriteScripts( os.path.join(prefsfolders, "scripts", "dc"),  "/text "+       self.getDcHelp(online)): 
+            if not self.WriteScripts( os.path.join(appdatafolders, "scripts", "dc"),  "/text "+       self.getDcHelp(online)): 
                 print "[Scripts] Could not write /dc"
             
             # /dcStatus
-            if not self.WriteScripts( os.path.join(prefsfolders, "scripts", "dcStatus"),  od): 
+            if not self.WriteScripts( os.path.join(appdatafolders, "scripts", "dcStatus"),  od): 
                 print "[Scripts] Could not write /dcStatus"
 
 
 
     # Wrapper function for AddScripts_Real
     def AddScripts(self, data, stats, period, online, group):
-        for prefsfolders in getAppdataFolders():
-            prefsfolders = os.path.join(prefsfolders, "..")
+        for appdatafolders in getAppdataFolders():
+            appdatafolders = os.path.join(appdatafolders, "..")
 
-            if not os.access(prefsfolders, os.F_OK):
+            if not os.access(appdatafolders, os.F_OK):
                 print "[Scripts] Error: Could not find a scripts folder with access rights"
                 return False
 
@@ -647,8 +647,8 @@ class Script():
         
             
         name = None
-        for prefsfolders in getAppdataFolders():
-            path = os.path.join(prefsfolders, accname, "Char{0}".format(charid), "Containers", "Container_51017x{0}.xml".format(containerid))
+        for appdatafolders in getAppdataFolders():
+            path = os.path.join(appdatafolders, "Prefs", accname, "Char{0}".format(charid), "Containers", "Container_51017x{0}.xml".format(containerid))
         
             try: ts = os.stat(path).st_mtime
             except: 
@@ -685,8 +685,8 @@ class Script():
         i = 1
         for entry in self.shoppacks:
             text = ('My stuff for sale:', self.shoppacks[entry][0], 'shop{0}'.format(i))
-            for prefsfolders in getAppdataFolders():
-                self.AddShopLootScript(prefsfolders, self.shoppacks[entry][1], text, "Default")
+            for appdatafolders in getAppdataFolders():
+                self.AddShopLootScript(appdatafolders, self.shoppacks[entry][1], text, "Default")
             i += 1
             
         if len(self.shoppacks) == 0:
@@ -713,12 +713,12 @@ class Script():
         
 
         # Write to /shopm
-        for prefsfolders in getAppdataFolders():
-            if not self.WriteScripts( os.path.join(prefsfolders, '..', 'scripts', 'shopm'),  '/text <a href="text://<font color=yellow>{0}</font>">Shop details</a>'.format(shopscript)):
+        for appdatafolders in getAppdataFolders():
+            if not self.WriteScripts( os.path.join(appdatafolders, 'scripts', 'shopm'),  '/text <a href="text://<font color=yellow>{0}</font>">Shop details</a>'.format(shopscript)):
                 print "[Scripts] Failed to write /shopm"   
                 return False
             else:
-                print "[Scripts] Debug: OK to write /shopm (shops: {0}, {1}".format(len(self.shoppacks) ,os.path.join(prefsfolders, '..', 'scripts', 'shopm'))
+                print "[Scripts] Debug: OK to write /shopm (shops: {0}, {1}".format(len(self.shoppacks) ,os.path.join(appdatafolders, 'scripts', 'shopm'))
                 return True
         return True
 
@@ -726,8 +726,8 @@ class Script():
     Returns the name of a given container, or None.
     '''
     def getBackpackName(self, accname, charid, containerID):
-        for prefsfolders in getAppdataFolders():
-            path = os.path.join(prefsfolders, accname, "Char{0}".format(charid), "Containers", "Container_51017x{0}.xml".format(containerID))
+        for appdatafolders in getAppdataFolders():
+            path = os.path.join(appdatafolders, accname, "Char{0}".format(charid), "Containers", "Container_51017x{0}.xml".format(containerID))
             if not os.access(path, os.F_OK): continue
             try: data = open(path).read()
             except: 
@@ -744,7 +744,7 @@ class Script():
     # Adds /loot
     def AddLootScript(self, data, targetWindow):
         text = ('Item drops for last corpse:', 'Click to see drops', 'loot')
-        for prefsfolders in getAppdataFolders():
+        for appdatafolders in getAppdataFolders():
             self.AddShopLootScript(data, text, targetWindow)
     
     # Adds /loot or /shopm
@@ -757,10 +757,10 @@ class Script():
             __SQL.close()
         
         # Check if AO folder exists
-        for prefsfolders in getAppdataFolders():
-            prefsfolders = os.path.join(prefsfolders, "..")
+        for appdatafolders in getAppdataFolders():
+            appdatafolders = os.path.join(appdatafolders, "..")
 
-            if not os.access(prefsfolders, os.F_OK):
+            if not os.access(appdatafolders, os.F_OK):
                 print "[Scripts] Error: Could not find a scripts folder with access rights"
                 return False
 
@@ -780,21 +780,21 @@ class Script():
             prefix = self.getPrefix(targetWindow)
 
             # Make sure the scripts folder exists
-            path = os.path.join(prefsfolders, '..', "scripts")
-            if not os.access(prefsfolders, os.F_OK):
+            path = os.path.join(appdatafolders, "scripts")
+            if not os.access(appdatafolders, os.F_OK):
                 try: 
                     print "[Scripts] Making dir %s" % os.path.join(path, "dcDumps")
                     os.makedirs( os.path.join(path, "dcDumps") )
                 except:
-                    #print "[Scripts] Failed creating scripts dir at: %s" % prefsfolders 
+                    #print "[Scripts] Failed creating scripts dir at: %s" % appdatafolders 
                     print "[Scripts] Error: Could not write loot script to Appdata"
                     return False
 
-            if self.WriteScripts(os.path.join(prefsfolders, "scripts", text[2]), prefix+filedata):
-                #print "wrote to {0}".format(os.path.join(prefsfolders, "scripts", "loot"))
-                self.WriteScripts(os.path.join(prefsfolders, "scripts", "e{0}".format(text[2])), '/text '+filedata)
+            if self.WriteScripts(os.path.join(appdatafolders, "scripts", text[2]), prefix+filedata):
+                #print "wrote to {0}".format(os.path.join(appdatafolders, "scripts", "loot"))
+                self.WriteScripts(os.path.join(appdatafolders, "scripts", "e{0}".format(text[2])), '/text '+filedata)
             else:
-                print "could not write to {0}".format(os.path.join(prefsfolders, "scripts", text[2]))
+                print "could not write to {0}".format(os.path.join(appdatafolders, "scripts", text[2]))
                 return False
 
 
