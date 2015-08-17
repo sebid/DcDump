@@ -4,7 +4,7 @@ import threading, time
 
 
 def GetXMLContents(enabled = True):
-	return """<Archive code="0">
+    return """<Archive code="0">
     <Array name="selected_group_ids">
         <Int64 value="1107296267" />
         <Int64 value="1107296266" />
@@ -86,475 +86,427 @@ def GetXMLContents(enabled = True):
     <String name="name" value='&quot;dcDump&quot;' />
 </Archive>""" % True
 
-# Success: Returns path to AO
-# Failure: Returns "-1"
+
 def AutodetectAO(args = ""):
-	"""
-	Autodetects anarchy online client
-	@return: Full path to AO, or -1
-	"""
-	pipe = os.popen("find.exe"+args)
-	output = pipe.readlines()
-	pipe.close()
-	
-	if len(output) == 1 and not "-1" in output:
-		return os.path.dirname(output[0])+"\\"
-	return "-1"
-	
-	
-def getAppdataAO():
-	"""
-	Gets AO /prefs/ path from Appdata
-	@return: Path or None
-	"""
-	appdata = os.environ['appdata']
-	path = os.path.join(appdata, "..", "Local", "Funcom", "")
-	for root, dirs, files in os.walk(path):
-		a = os.path.basename(root).lower() == "prefs"
-		b = os.access(os.path.join(root, "prefs.xml"), os.R_OK)
-		if a and b:
-			return root
-	return ""
-	
+    """
+    Autodetects anarchy online client
+    @return: Full path to AO, or -1
+    """
+    pipe = os.popen("find.exe"+args)
+    output = pipe.readlines()
+    pipe.close()
+
+    if len(output) == 1 and not "-1" in output:
+        return os.path.dirname(output[0])+"\\"
+    return "-1"
+
+
+def getAppdataFolders():
+    """
+    Gets AO /prefs/ path from Appdata
+    @return: Path(s) or None
+    """
+    appdata = os.environ['appdata']
+    path = os.path.join(appdata, "..", "Local", "Funcom", "")
+    folders = []
+    for root, dirs, files in os.walk(path):
+        a = os.path.basename(root).lower() == "prefs"
+        b = os.access(os.path.join(root, "prefs.xml"), os.R_OK)
+        if a and b:
+            folders.append(root)
+            return folders
+    return ""
+
+
 '''
 class AnonStats (threading.Thread):
-	"""Opens site for logging anonymous user statistics..
-		A hash is made from PC name"""
-	def __init__(self):
-		threading.Thread.__init__(self)
-	def run(self):
-		from platform import node
-		from urllib import urlopen
-		
-		# No need to go apeshit just because it doesn't work, its just statistics.
-		try:
-			hashStr = node()
-			v = "%s.%d" % (Build_Version, Build_ID)
-			if not '.exe' in sys.argv[0]:
-				#data = urlopen("http://ribbs.dreamcrash.org/stats.php?hash=%d&version=%s&debug=1" % (hashStr.__hash__(), v) )
-				pass
-			else:
-				data = urlopen("http://ribbs.dreamcrash.org/stats.php?hash=%d&version=%s" % (hashStr.__hash__(), v) )
-				print data
-		except:
-			print "Failed to report anonymous stats", sys.exc_info()[0]
+    """Opens site for logging anonymous user statistics..
+        A hash is made from PC name"""
+    def __init__(self):
+        threading.Thread.__init__(self)
+    def run(self):
+        from platform import node
+        from urllib import urlopen
+        
+        # No need to go apeshit just because it doesn't work, its just statistics.
+        try:
+            hashStr = node()
+            v = "%s.%d" % (Build_Version, Build_ID)
+            if not '.exe' in sys.argv[0]:
+                #data = urlopen("http://ribbs.dreamcrash.org/stats.php?hash=%d&version=%s&debug=1" % (hashStr.__hash__(), v) )
+                pass
+            else:
+                data = urlopen("http://ribbs.dreamcrash.org/stats.php?hash=%d&version=%s" % (hashStr.__hash__(), v) )
+                print data
+        except:
+            print "Failed to report anonymous stats", sys.exc_info()[0]
 
-		return
+        return
+
 '''
 
+
 def AutodetectAOIA():
-	return AutodetectAO(" -aoia")
+    return AutodetectAO(" -aoia")
+
 
 def VerifyAOIA(path):
-	return os.access( os.path.join(path, "ItemAssistant.db") , os.F_OK)
+    return os.access( os.path.join(path, "ItemAssistant.db") , os.F_OK)
+
 
 def VerifyAO(path):
-	return os.access( os.path.join(path, "Anarchy.exe"), os.F_OK)
+    return os.access( os.path.join(path, "Anarchy.exe"), os.F_OK)
+
 
 def Initialize(aopath):
-	# Get account names from IDs etc [used below]
-	# Also detects new IDs and initializes the damage window, cleans old logs.
-	d = GetAccFromID( aopath, True )
-	
-	
-	'Attempt to access the database, if successful, just bail here. [otherwise initialize database]' 
-	try: 
-		__SQL.execute("select dimension from chars limit 1")
-		return False
-	except:	
-		pass
-	
-	#if not aopath:
-	#	aopath = AutodetectAO()
-		
-	if not VerifyAO(aopath):
-		return False
-	
-	__CONN = sqlite3.connect("SQDB")
-	__SQL = __CONN.cursor()
-	# Insert and update the locally maintained list of toons
+    # Get account names from IDs etc [used below]
+    # Also detects new IDs and initializes the damage window, cleans old logs.
+    d = GetAccFromID(True)
 
+    'Attempt to access the database, if successful, just bail here. [otherwise initialize database]' 
+    try: 
+        __SQL.execute("select dimension from chars limit 1")
+        return False
+    except: 
+        pass
 
-	d2 = {}
-	for Key in d:
-		acc = d[Key]
-		try: 
-			__SQL.execute("insert into chars (id, nick, active, account, dimension) values (?, ?, ?, ?, ?)", (key, '', 0, acc, 'RK1'))
-		except: 
-			__CONN.commit()
-			__SQL.close()
-			return False
-	
-	__CONN.commit()
-	__SQL.close()
-	return True
+    #if not aopath:
+    #   aopath = AutodetectAO()
+
+    if not VerifyAO(aopath):
+        return False
+
+    __CONN = sqlite3.connect("SQDB")
+    __SQL = __CONN.cursor()
+    # Insert and update the locally maintained list of toons
+
+    d2 = {}
+    for Key in d:
+        acc = d[Key]
+        try: 
+            __SQL.execute("insert into chars (id, nick, active, account, dimension) values (?, ?, ?, ?, ?)", (key, '', 0, acc, 'RK1'))
+        except: 
+            __CONN.commit()
+            __SQL.close()
+            return False
+
+    __CONN.commit()
+    __SQL.close()
+    return True
+
 
 def __verifyToonsDB(__SQL):
-	# Make sure the chars table exists, and is correct.
-	#__SQL.execute("CREATE TABLE if not exists chars (id INTEGER NOT NULL PRIMARY KEY UNIQUE, nick TEXT, active INTEGER, account TEXT)")
-	#try: __SQL.execute("select account from chars limit 1")
-	#except:	__SQL.execute("alter table chars add account TEXT")
-	
-	__SQL.execute("CREATE TABLE if not exists chars (id INTEGER NOT NULL PRIMARY KEY UNIQUE, nick TEXT, active INTEGER, account TEXT, dimension TEXT)")
-	try: __SQL.execute("select dimension from chars limit 1")
-	except:	
-		__SQL.execute("alter table chars add dimension TEXT")
+    # Make sure the chars table exists, and is correct.
+    #__SQL.execute("CREATE TABLE if not exists chars (id INTEGER NOT NULL PRIMARY KEY UNIQUE, nick TEXT, active INTEGER, account TEXT)")
+    #try: __SQL.execute("select account from chars limit 1")
+    #except:    __SQL.execute("alter table chars add account TEXT")
 
+    __SQL.execute("CREATE TABLE if not exists chars (id INTEGER NOT NULL PRIMARY KEY UNIQUE, nick TEXT, active INTEGER, account TEXT, dimension TEXT)")
+    try: __SQL.execute("select dimension from chars limit 1")
+    except: 
+        __SQL.execute("alter table chars add dimension TEXT")
 
 
 class DBThread (threading.Thread):
-	"""SaveToonsDB can take a while, do it threaded.."""
-	def __init__(self, data):
-		threading.Thread.__init__(self)
-		self.data = data
-	def run(self):
-		SaveToonsDB( self.data )
-		return
-	
-	
-	
+    """SaveToonsDB can take a while, do it threaded.."""
+    def __init__(self, data):
+        threading.Thread.__init__(self)
+        self.data = data
+    def run(self):
+        SaveToonsDB( self.data )
+        return
+
 
 def UpdateToonsDB(ID, nick):
-	__CONN = sqlite3.connect("SQDB")
-	__SQL = __CONN.cursor()
-	__verifyToonsDB(__SQL)
-	__SQL.execute("update chars set nick=? where id = ?", (nick, ID))
-	aff = __SQL.rowcount
-	#print "update chars set nick=%s where id = %d" % (nick, ID)
-	__CONN.commit()
-	__SQL.close()
-	return aff != 0
-	
+    __CONN = sqlite3.connect("SQDB")
+    __SQL = __CONN.cursor()
+    __verifyToonsDB(__SQL)
+    __SQL.execute("update chars set nick=? where id = ?", (nick, ID))
+    aff = __SQL.rowcount
+    #print "update chars set nick=%s where id = %d" % (nick, ID)
+    __CONN.commit()
+    __SQL.close()
+    return aff != 0
+
 
 def SaveToonsDB(dict):
-	import time
-	__CONN = sqlite3.connect("SQDB")
-	__SQL = __CONN.cursor()
-	__verifyToonsDB(__SQL)
-	s = time.time()
-	import sys
-	# Insert and update the locally maintained list of toons
-	for key in dict:
-		if dict[key] == None:
-			__SQL.execute("delete from chars where id = ?", (key,))
-			print "delete from chars where id = %s" % key
-			continue
-			
-		nick = dict[key]["Toon"]
-		enabled = dict[key]["Enabled"]
-		acc = dict[key]["Acc"]
-		try: dim = dict[key]["Dimension"]
-		except: dim = "RK1"
-		
-		
-		try: 
-			__SQL.execute("insert into chars (id, nick, active, account, dimension) values (?, ?, ?, ?, ?)", (key, nick, enabled, acc, dim))
-			#print "insert into chars (id,nick,active,account,dimension values (%s, %s, %s, %s, %s)" % (key, nick, enabled, acc, dim)
-		except: 
-			#print "exception", sys.exc_info();
-			__SQL.execute("update chars set nick=?, active=?, account=?, dimension=? where id = ?", (nick, enabled, acc, dim, key))
-			#print "update chars set nick=%s, active=%s, account=%s, dimension=%s where id =%s" % (nick, enabled, acc, key, dim)
-	
-	if time.time()-s > 1:
-		print "SaveSQL: Took %g seconds to make %d queries etc.." % (time.time()-s, len(dict)*2)
-	s = time.time()	
-	
-	__CONN.commit()
-	__SQL.close()
+    import time
+    __CONN = sqlite3.connect("SQDB")
+    __SQL = __CONN.cursor()
+    __verifyToonsDB(__SQL)
+    s = time.time()
+    import sys
+    # Insert and update the locally maintained list of toons
+    for key in dict:
+        if dict[key] == None:
+            __SQL.execute("delete from chars where id = ?", (key,))
+            print "delete from chars where id = %s" % key
+            continue
 
-	
-	
-	
+        nick = dict[key]["Toon"]
+        enabled = dict[key]["Enabled"]
+        acc = dict[key]["Acc"]
+        try: dim = dict[key]["Dimension"]
+        except: dim = "RK1"
+
+        try: 
+            __SQL.execute("insert into chars (id, nick, active, account, dimension) values (?, ?, ?, ?, ?)", (key, nick, enabled, acc, dim))
+            #print "insert into chars (id,nick,active,account,dimension values (%s, %s, %s, %s, %s)" % (key, nick, enabled, acc, dim)
+        except: 
+            #print "exception", sys.exc_info();
+            __SQL.execute("update chars set nick=?, active=?, account=?, dimension=? where id = ?", (nick, enabled, acc, dim, key))
+            #print "update chars set nick=%s, active=%s, account=%s, dimension=%s where id =%s" % (nick, enabled, acc, key, dim)
+
+    if time.time()-s > 1:
+        print "SaveSQL: Took %g seconds to make %d queries etc.." % (time.time()-s, len(dict)*2)
+    s = time.time() 
+
+    __CONN.commit()
+    __SQL.close()
+
+
 # Load all own toons stored in the db 
-def LoadToonsDB(pathToAo):
-	"""
-	@param pathToAo: Full path to anarchy online directory
-	Loads the ID, Toon name, enable status and accname from SQL database
-	If enabled: Verifies account name from AO\prefs folder. 
-	"""
-	__CONN = sqlite3.connect("SQDB")
-	__SQL = __CONN.cursor()
-	__verifyToonsDB(__SQL)
-	
-	
-	__SQL.execute("select id, nick, active, account, dimension from chars")
-	results = {}
-	for id, nick, active, acc, dimension in __SQL:
-		# Check if the acc\id folder really exists, if not: disable it.
-		if active:
-			pathA = "%s\\prefs\\%s\\Char%d" % (pathToAo, acc, id)
-			pathB = "%s\\%s\\Char%d" % (getAppdataAO(), acc, id)
-			if not os.access(pathA, os.F_OK) and not os.access(pathB, os.F_OK): active = False
-			
-		# Dimension may not be set for older DBs
-		if not dimension: dim = "RK1"
-		else: dim = dimension
-		results[id] = {"Toon":nick, "Enabled": active, "Acc":acc, "Dimension":dim}
-		
-	#import pprint
-	#pprint.pprint(results)
-	__CONN.commit()
-	__SQL.close()
-	return results
+def LoadToonsDB():
+    """
+    Loads the ID, Toon name, enable status and accname from SQL database
+    If enabled: Verifies account name from AO\prefs folder. 
+    """
+    __CONN = sqlite3.connect("SQDB")
+    __SQL = __CONN.cursor()
+    __verifyToonsDB(__SQL)
+
+    __SQL.execute("select id, nick, active, account, dimension from chars")
+    results = {}
+    for id, nick, active, acc, dimension in __SQL:
+        # Check if the acc\id folder really exists, if not: disable it.
+        if active:
+            for prefsfolders in getAppdataFolders():
+                path = "%s\\%s\\Char%d" % (prefsfolders, acc, id)
+                if not os.access(path, os.F_OK): active = False
+
+        # Dimension may not be set for older DBs
+        if not dimension: dim = "RK1"
+        else: dim = dimension
+        results[id] = {"Toon":nick, "Enabled": active, "Acc":acc, "Dimension":dim}
+
+    #import pprint
+    #pprint.pprint(results)
+    __CONN.commit()
+    __SQL.close()
+    return results
 
 
 # Loads all toons from AOIA and returns in a dict
 # Input: Path to AOIA
 # Output: {id} = toon
 def GetIdToonFromAOIA(path):
-	if not VerifyAOIA(path):
-		 return {}
-		
-	__CONN = sqlite3.connect( os.path.join(path, "ItemAssistant.db"))
-	__SQL = __CONN.cursor()
-	__SQL.execute('SELECT `charname`, `charid` FROM tToons order by `charname`') # Yes, ttoon is correct.
-	data = [C for C in __SQL]
-	__SQL.close()
-	
-	out = {}
-	for nick, id in data:
-		out[id] = nick
-	
-	
-	return out
+    if not VerifyAOIA(path):
+         return {}
+        
+    __CONN = sqlite3.connect( os.path.join(path, "ItemAssistant.db"))
+    __SQL = __CONN.cursor()
+    __SQL.execute('SELECT `charname`, `charid` FROM tToons order by `charname`') # Yes, ttoon is correct.
+    data = [C for C in __SQL]
+    __SQL.close()
+
+    out = {}
+    for nick, id in data:
+        out[id] = nick
+    return out
+
 
 # Returns the char IDs + accounts
 # Walks trough \prefs\ and returns every Acc\Char## combination
-def GetAccFromID(pathToAo, initialize, filter = []):
-	"""
-	@param pathToAo: Full path to Anarchy Online install folder
-	@param filter: IDs to retreive (all if not specified)
-	@return: Dict[id] = "accname"
-	Traverses the AO\prefs folder for account names.
-	"""
-	
-	out = {}
-	pathList = []
-	pathToAppdata = getAppdataAO()
+def GetAccFromID(initialize, filter = []):
+    """
+    @param filter: IDs to retreive (all if not specified)
+    @return: Dict[id] = "accname"
+    Traverses the AO\prefs folder for account names.
+    """
 
-	# Regular AO Path
-	if VerifyAO(pathToAo) and os.access(os.path.join(pathToAo, "prefs"), os.R_OK):
-		pathList.append( os.path.join(pathToAo, "prefs") )
-	
-	# Appdata AO Path
-	if pathToAppdata != None and os.access(pathToAppdata, os.R_OK):
-		pathList.append(pathToAppdata)
+    out = {}
+    pathList = []
+    for prefsfolders in getAppdataFolders():
+        #Path = os.path.join(prefsfolders, "prefs")
 
-	# Need at least one path
-	if len(pathList) == 0:
-		return out
-	
-	print "[Chars  ] Valid prefs detected are:"
-	for P in pathList: print "[Chars  ] %s" % P
-	
-	for Path in pathList:
-		dirPrefs = os.listdir(Path)
+        dirPrefs = os.listdir(prefsfolders)
 		#print "[Chars  ] Loading toons in path: %s" % Path
-		for Account in dirPrefs:
-			pathToons = os.path.join(Path, Account)
-			if not os.path.isdir( pathToons ): continue
-			dirToons = os.listdir(pathToons)
-			
-			for ToonID in dirToons:
-				if not os.path.isdir( os.path.join(pathToons, ToonID) ): continue
-				if ToonID[:4] != 'Char': continue
-	 			try: id = int( ToonID[4:] )
-	 			except ValueError: continue # Damnit, why is this needed?
-	 			
-	 			# If filtering, make sure its in the list.
-	 			if filter and not id in filter:
-	 				continue
-	 			
-			 	out[id] = Account		# Add to list
-			 	
-			 	if initialize:
-				 	# Install the logger-window if it doesnt exist
-				 	fullpath = os.path.join(pathToons, ToonID, 'Chat', 'Windows', 'WindowDCDump')
-				 	if not os.access(os.path.join(fullpath, "Config.xml"), os.F_OK):
-				 		try: os.makedirs(fullpath)
-						except WindowsError: continue
-						try: f = open( os.path.join(fullpath, "Config.xml"), "w")
-						except IOError: continue
-						
-						# Write the window data
-						f.write( GetXMLContents() )
-						f.close()
-						#print "Enabled:",fullpath
-						
-					# It does exist, lets delete any logfiles that may exist (only if 256KB or larger)
-					elif os.access(os.path.join(fullpath, 'Log.txt'), os.W_OK) and os.path.getsize(os.path.join(fullpath, 'Log.txt')) > 256*1024:
-						try: os.remove(os.path.join(fullpath, 'Log.txt'))
-						except:
-							f = open(os.path.join(fullpath, 'Log.txt'), 'w')
-							f.write('')
-							f.close()
-						#print "Trimmed file",os.path.join(fullpath, 'Log.txt')
-									
-	
-	return out
+        for Account in dirPrefs:
+            pathToons = os.path.join(prefsfolders, Account)
+            if not os.path.isdir( pathToons ): continue
+            dirToons = os.listdir(pathToons)
 
+            for ToonID in dirToons:
+                if not os.path.isdir( os.path.join(pathToons, ToonID) ): continue
+                if ToonID[:4] != 'Char': continue
+                try: id = int( ToonID[4:] )
+                except ValueError: continue # Damnit, why is this needed?
+
+                # If filtering, make sure its in the list.
+                if filter and not id in filter:
+                    continue
+
+                out[id] = Account       # Add to list
+
+                if initialize:
+					# Install the logger-window if it doesnt exist
+                    fullpath = os.path.join(pathToons, ToonID, 'Chat', 'Windows', 'WindowDCDump')
+                    if not os.access(os.path.join(fullpath, "Config.xml"), os.F_OK):
+                        try: os.makedirs(fullpath)
+                        except WindowsError: continue
+                        try: f = open( os.path.join(fullpath, "Config.xml"), "w")
+                        except IOError: continue
+
+                        # Write the window data
+                        f.write( GetXMLContents() )
+                        f.close()
+                        #print "Enabled:",fullpath
+
+					# It does exist, lets delete any logfiles that may exist (only if 256KB or larger)
+                    elif os.access(os.path.join(fullpath, 'Log.txt'), os.W_OK) and os.path.getsize(os.path.join(fullpath, 'Log.txt')) > 256*1024:
+                        try: os.remove(os.path.join(fullpath, 'Log.txt'))
+                        except:
+                            f = open(os.path.join(fullpath, 'Log.txt'), 'w')
+                            f.write('')
+                            f.close()
+                            #print "Trimmed file",os.path.join(fullpath, 'Log.txt')
+    return out
 
 
 # Input: Dict
 # Saves the program settings to SQL database
 def SaveConfig(config):
-	__CONN = sqlite3.connect("SQDB")
-	__SQL = __CONN.cursor()
+    __CONN = sqlite3.connect("SQDB")
+    __SQL = __CONN.cursor()
 
-	__SQL.execute("CREATE TABLE if not exists settings (id INTEGER PRIMARY KEY, option TEXT, setting TEXT)")
-	
-	# Update config table, not very elegant
-	# But works for only 1 process accessing DB
-	for Key in config:
-		__SQL.execute("insert or ignore into settings (option, setting) values (?, ?)", (Key, config[Key]))
-		__SQL.execute("update settings set setting=? where option=?", (config[Key], Key))
+    __SQL.execute("CREATE TABLE if not exists settings (id INTEGER PRIMARY KEY, option TEXT, setting TEXT)")
 
+    # Update config table, not very elegant
+    # But works for only 1 process accessing DB
+    for Key in config:
+        __SQL.execute("insert or ignore into settings (option, setting) values (?, ?)", (Key, config[Key]))
+        __SQL.execute("update settings set setting=? where option=?", (config[Key], Key))
 
-	__CONN.commit()
-	__SQL.close()
-	
-	return True
+    __CONN.commit()
+    __SQL.close()
+    
+    return True
+
 
 # Input: Dict
 # Loads the stored program settings from SQL database
 def LoadConfig():
-	__CONN = sqlite3.connect("SQDB")
-	__SQL = __CONN.cursor()
-	
-	
-	__SQL.execute("CREATE TABLE if not exists settings (option TEXT PRIMARY KEY, setting TEXT)")
-	
-	__SQL.execute("select * from settings")
-	out = {}
-	for Key, Val in __SQL:
-		out[Key] = Val
-		#print Key, Val
+    __CONN = sqlite3.connect("SQDB")
+    __SQL = __CONN.cursor()
 
-	__CONN.commit()
-	__SQL.close()
-	
-	return out
+    __SQL.execute("CREATE TABLE if not exists settings (option TEXT PRIMARY KEY, setting TEXT)")
 
-def GetLogfilePath(aoPath, accname, id):
-	pathList = []
-	
-	# Regular prefs
-	logPath = os.path.join(accname, "Char%d"%id, "Chat", "Windows", "WindowDCDump", "log.txt")
-	pathA = os.path.join(aoPath, "prefs", logPath)
-	if os.access(pathA, os.F_OK): pathList.append(pathA)
-	
-	# Appdata prefs
-	pathB = os.path.join(getAppdataAO(), logPath)
-	if os.access(pathB, os.F_OK): pathList.append(pathB)
-	
-	
-	if len(pathList) == 0: return None
-	if len(pathList) == 1: return pathList[0]
-	
-	# Return the newest of the two logs
-	if os.path.getmtime(pathList[0]) < os.path.getmtime(pathList[1]):
-		return pathList[1]
-	else:
-		return pathList[0]
-	 
+    __SQL.execute("select * from settings")
+    out = {}
+    for Key, Val in __SQL:
+        out[Key] = Val
+        #print Key, Val
 
-def getLatestLog(aoPath, toonlist):
-	"""
-	@param aoPath: Full path to Anarchy Online
-	@param toonlist: (Accname, ID) tuple  
-	@return: ID of toon with newest logfile
-	"""
-	
-	# Get the newest logfile ID from AO path
-	latestAO = {} #Store timestamp-age by ID/Key
-	for accname, id in toonlist:
-		path = os.path.join(aoPath, "prefs", accname, "Char%d"%id, "Chat", "Windows", "WindowDCDump", "log.txt")
-		try: latestAO[id] = os.path.getmtime(path)
-		except: pass
-	
-	# Get the newest logfile ID from prefs path	
-	latestPref = {}
-	for accname, id in toonlist:
-		path = os.path.join(getAppdataAO(), accname, "Char%d"%id, "Chat", "Windows", "WindowDCDump", "log.txt")
-		try: latestPref[id] = os.path.getmtime(path)
-		except: pass
-	
-	# Grab highest timestamp
-	if len(latestAO): m = max(latestAO,key = lambda a: latestAO.get(a))
-	else: m = 0
-	
-	if len(latestPref): n = max(latestPref,key = lambda a: latestPref.get(a))
-	else: n = 0
-	
-	best = max(m, n)
-	if best == 0: return None
-	else: return best
-	
-	
+    __CONN.commit()
+    __SQL.close()
+    return out
+
+def GetLogfilePath(accname, id):
+    pathList = []
+    # Regular prefs
+    logPath = os.path.join(accname, "Char%d"%id, "Chat", "Windows", "WindowDCDump", "log.txt")
+    for prefsfolders in getAppdataFolders():
+        pathtoprefs = os.path.join(prefsfolders, logPath)
+        if os.access(pathtoprefs, os.F_OK): pathList.append(pathtoprefs)
+
+        if len(pathList) == 0: return None
+        if len(pathList) == 1: return pathList[0]
+
+        # Return the newest of the two logs
+        if os.path.getmtime(pathList[0]) < os.path.getmtime(pathList[1]):
+            return pathList[1]
+        else:
+            return pathList[0]
+
+
+def getLatestLog(toonlist):
+    """
+    @param toonlist: (Accname, ID) tuple  
+    @return: ID of toon with newest logfile
+    """
+    dataset = []
+    # Get the newest logfile ID
+    for prefsfolders in getAppdataFolders():
+        for accname, id in toonlist:
+            path = os.path.join(prefsfolders, "prefs", accname, "Char%d"%id, "Chat", "Windows", "WindowDCDump", "log.txt")
+            dataset.append( (os.path.getmtime(path), id) )
+
+    # Grab highest timestamp
+    dataset = sorted(dataset, key=itemgetter(0))
+
+    if len(dataset) > 0:
+        return dataset[0][1]
+    else:
+        return None
+
+
 def getDimension(id):
-	__CONN = sqlite3.connect("SQDB")
-	__SQL = __CONN.cursor()
-	
-	
-	__SQL.execute("select dimension from chars where id = ?", (id,))
-	for x in __SQL:
-		__SQL.close()
-		return x[0]
+    __CONN = sqlite3.connect("SQDB")
+    __SQL = __CONN.cursor()
 
-	__SQL.close()
-	return None
-	
+    __SQL.execute("select dimension from chars where id = ?", (id,))
+    for x in __SQL:
+        __SQL.close()
+        return x[0]
+
+    __SQL.close()
+    return None
+
 if __name__ == "__main__":
-	import sys, pprint
-	aopath = "D:\\Program Files (x86)\\Games\\Anarchy Online"
-	pprint.pprint(GetAccFromID(aopath, False))
-	
-	#print getDimension(2774555951)
-	sys.exit(0)
-	
-	#print CopyFromAOIA("D:\\Program Files (x86)\\Games\\Anarchy Online\\aoia")
-	#print CopyFromFolders("D:\\Program Files (x86)\\Games\\Anarchy Online")
-	#print Install("D:\\Program Files (x86)\\Games\\Anarchy Online", 3043184575)
-	#print Uninstall("D:\\Program Files (x86)\\Games\\Anarchy Online", 555)
+    import sys, pprint
+    aopath = "D:\\Program Files (x86)\\Games\\Anarchy Online"
+    pprint.pprint(GetAccFromID(False))
 
+    #print getDimension(2774555951)
+    sys.exit(0)
 
-	d = GetAccFromID(aopath)
-	for X in d:
-		print X, d[X]
-	
-	print "n: ", len(d)
-	print "-- end --"
-	
-	
-	
-	"""
-	d2 = GetFromFolders2(aopath)
-	for X in d2:
-		print X, d2[X]
-		
-	print "-- end --"
-	print "Old:", len(d)
-	print "New:", len(d2)
-	
-	print d["1188094805"]
-	print d2["1188094805"]
-	for X in d2:
-		print (d2[X] == d[X])
-	
+    #print CopyFromAOIA("D:\\Program Files (x86)\\Games\\Anarchy Online\\aoia")
+    #print CopyFromFolders("D:\\Program Files (x86)\\Games\\Anarchy Online")
+    #print Install("D:\\Program Files (x86)\\Games\\Anarchy Online", 3043184575)
+    #print Uninstall("D:\\Program Files (x86)\\Games\\Anarchy Online", 555)
 
-	d,d2 = d2,d	
-	for X in d2:
-		print (d2[X] == d[X])"""
+    d = GetAccFromID()
+    for X in d:
+        print X, d[X]
 
-	
-	dict = {"AOPath":"c:\\", "AOIAPath":"d:\\"}
-	#SaveConfig(dict)
-	#LoadConfig()
-	#LoadToons()
-	print "--- start ----"
-	
+    print "n: ", len(d)
+    print "-- end --"
 
-	print ".."
-	print AutodetectAO()
-	print AutodetectAOIA()
+    """
+    d2 = GetFromFolders2(aopath)
+    for X in d2:
+        print X, d2[X]
+        
+    print "-- end --"
+    print "Old:", len(d)
+    print "New:", len(d2)
     
+    print d["1188094805"]
+    print d2["1188094805"]
+    for X in d2:
+        print (d2[X] == d[X])
+    
+
+    d,d2 = d2,d 
+    for X in d2:
+        print (d2[X] == d[X])"""
+
+    dict = {"AOPath":"c:\\", "AOIAPath":"d:\\"}
+    #SaveConfig(dict)
+    #LoadConfig()
+    #LoadToons()
+    print "--- start ----"
+
+    print ".."
+    print AutodetectAO()
+    print AutodetectAOIA()

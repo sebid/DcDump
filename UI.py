@@ -231,7 +231,7 @@ class MyDialog(wx.Dialog):
 
         
         # Load char data from SQL
-        toonsDict = Chars.LoadToonsDB(self.aoPath)
+        toonsDict = Chars.LoadToonsDB()
         modified = [] # Modified toon data, for storing.
           
         # Detect which characters, if any, are missing an account name.
@@ -244,7 +244,7 @@ class MyDialog(wx.Dialog):
 
 
         # Grab account names from Prefs
-        folderDict = Chars.GetAccFromID(self.aoPath, False)
+        folderDict = Chars.GetAccFromID(False)
         for ID in folderDict:
             if ID in missingAccount: 
                 missingAccount.remove(ID)                   # No longer missing
@@ -879,8 +879,8 @@ class MyFrame(wx.Frame):
         # Grab log name, verify that it exists
         path = ""
         try:
-            accnames = Chars.GetAccFromID(self._config["AOPath"], False)
-            path = Chars.GetLogfilePath(self._config["AOPath"], accnames[self.currentToonID], self.currentToonID)
+            accnames = Chars.GetAccFromID(False)
+            path = Chars.GetLogfilePath(accnames[self.currentToonID], self.currentToonID)
 
             if path == None:
                 self.frame_1_statusbar.SetLabel("Error: No recent fights found for toon '%s' (no log)" % self.currentToon)
@@ -918,7 +918,7 @@ class MyFrame(wx.Frame):
         
         self.listbox1_toonlist.Set([])
         ownToons = []
-        self.activeToons = Chars.LoadToonsDB(self._config["AOPath"])
+        self.activeToons = Chars.LoadToonsDB()
 
         # Append items to list        
         for Key in self.activeToons:
@@ -963,7 +963,7 @@ class MyFrame(wx.Frame):
     # Attempt to find the latest modified log
     # Here we combine the toon list from Button1Manage with account list from the Chars module
     def Tab1_BLatest(self, event):
-        accnames = Chars.GetAccFromID(self._config["AOPath"], False)
+        accnames = Chars.GetAccFromID(False)
         if len(accnames) == 0:
             self.frame_1_statusbar.SetLabel("Could not detect any active toons")
             return
@@ -976,7 +976,7 @@ class MyFrame(wx.Frame):
             except: pass
         
         # Grab the latest toon, based on enabled list
-        latest = Chars.getLatestLog(self._config["AOPath"], tmpList)
+        latest = Chars.getLatestLog(tmpList)
             
         if latest == None:
             self.frame_1_statusbar.SetLabel("No logs detected, pacifist?")
@@ -1043,7 +1043,7 @@ class MyFrame(wx.Frame):
             del self._config["AOPath"]
         else:
             s = Scripts.Script()
-            s.AddOnlineStatus(self._config["AOPath"], False)            
+            s.AddOnlineStatus(False)            
 
         
         # Signal thread to stop
@@ -1065,7 +1065,7 @@ class MyFrame(wx.Frame):
         
     def InitializeSQDB(self,aoPath, aoiaPath):
         # Load char data from SQL
-        toonsDict = Chars.LoadToonsDB(aoPath)
+        toonsDict = Chars.LoadToonsDB()
         modified = [] # Modified toon data, for storing.
           
         # Detect which characters, if any, are missing an account name.
@@ -1078,7 +1078,7 @@ class MyFrame(wx.Frame):
 
 
         # Grab account names from Prefs
-        folderDict = Chars.GetAccFromID(aoPath, False)
+        folderDict = Chars.GetAccFromID(False)
         for ID in folderDict:
             if ID in missingAccount: 
                 missingAccount.remove(ID)                   # No longer missing

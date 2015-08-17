@@ -19,8 +19,7 @@ if len(sys.argv) > 1 and sys.argv[1] == 'debug':
     Debug = True
 else:
     Build_ID += 1
-    
-    
+
 # Write the new settings file
 h = open("DebugSettings.py", "w")
 data += "Build_ID = %d\n" % Build_ID
@@ -45,7 +44,7 @@ else:
           zipfile = "data1.dat",
           data_files=[(".", ["find.exe"])]
           )
-    
+
 # Compress to rar file
 import os
 if Debug: 
@@ -59,4 +58,3 @@ os.chdir("dist")
 pipe = os.popen(rarcmd)
 for L in pipe.readlines(): print L,
 pipe.close()
-

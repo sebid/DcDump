@@ -68,7 +68,6 @@
     <Compile Include="Threadz.py" />
     <Compile Include="trimmer.py" />
     <Compile Include="UI.py" />
-    <Compile Include="WhoIs - Copy.py" />
     <Compile Include="WhoIs.py" />
   </ItemGroup>
   <ItemGroup>
