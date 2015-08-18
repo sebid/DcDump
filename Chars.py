@@ -326,12 +326,12 @@ def GetAccFromID(initialize, filter = []):
     out = {}
     pathList = []
     for appdatafolders in getAppdataFolders():
-        #Path = os.path.join(appdatafolders, "prefs")
+        Path = os.path.join(appdatafolders, "prefs")
+        dirPrefs = os.listdir(Path)
+        #print "[Chars  ] Loading toons in path: %s" % Path
 
-        dirPrefs = os.listdir(appdatafolders)
-		#print "[Chars  ] Loading toons in path: %s" % Path
         for Account in dirPrefs:
-            pathToons = os.path.join(appdatafolders,"Prefs", Account)
+            pathToons = os.path.join(Path, Account)
             if not os.path.isdir( pathToons ): continue
             dirToons = os.listdir(pathToons)
 
