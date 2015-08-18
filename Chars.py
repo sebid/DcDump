@@ -416,15 +416,10 @@ def GetLogfilePath(accname, id):
     for appdatafolders in getAppdataFolders():
         logPath = os.path.join(appdatafolders, "Prefs", accname, "Char%d"%id, "Chat", "Windows", "WindowDCDump", "log.txt")
         if os.access(logPath, os.F_OK): pathList.append(logPath)
-
-        if len(pathList) == 0: return None
-        if len(pathList) == 1: return pathList[0]
-
-        # Return the newest of the two logs
-        if os.path.getmtime(pathList[0]) < os.path.getmtime(pathList[1]):
-            return pathList[1]
-        else:
-            return pathList[0]
+        
+    if len(pathList) == 0: return None       
+    latest_subdir = max(pathlist, key=os.path.getmtime)
+    return latest_subdir
 
 
 def getLatestLog(toonlist):
