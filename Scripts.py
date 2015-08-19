@@ -457,8 +457,9 @@ class Script():
 
         # Make sure the scripts folder exists
         for appdatafolders in getAppdataFolders():
-            appdatafolders = os.path.join(appdatafolders, "scripts")
-            if not os.access(appdatafolders, os.F_OK):
+            scriptsfolders = os.path.join(appdatafolders, "scripts")
+            #print scriptsfolders
+            if not os.access(scriptsfolders, os.F_OK):
                 try: 
                     print "[Scripts] Making dir %s" % appdatafolders
                     os.makedirs( "dcDumps" )
@@ -466,10 +467,10 @@ class Script():
                     print "[Scripts] Failed creating scripts dir at: %s" % appdatafolders 
                     return False
             
-            if not os.access(os.path.join(appdatafolders, "scripts", "dcDumps"), os.F_OK):
+            if not os.access(os.path.join(scriptsfolders, "dcDumps"), os.F_OK):
                 try: 
                     print "[Scripts] Making dir %s" % os.path.join(appdatafolders, "dcDumps")
-                    os.makedirs( os.path.join(appdatafolders, "scripts", "dcDumps") )
+                    os.makedirs( os.path.join(scriptsfolders, "dcDumps") )
                 except:
                     print "[Scripts] Failed creating scripts dir at: %s" % appdatafolders 
                     return False
@@ -497,42 +498,42 @@ class Script():
 
         
         
-            #if not os.access(os.path.join(appdatafolders, scripts",  "dcBoth"), os.F_OK):
-            if not self.WriteScripts(os.path.join(appdatafolders, "scripts", "dcBoth"),   prefix+"/dcDumps/dcBoth1"):    
+            #if not os.access(os.path.join(scriptsfolders, "dcBoth"), os.F_OK):
+            if not self.WriteScripts(os.path.join(scriptsfolders, "dcBoth"),   prefix+"/dcDumps/dcBoth1"):    
                 return False
-            if not os.access(os.path.join(appdatafolders, "scripts",  "dcBothe"), os.F_OK):
-                if not self.WriteScripts(os.path.join(appdatafolders, "scripts", "dcBothe"),  "/dcDumps/dcBothe1"):   
+            if not os.access(os.path.join(scriptsfolders, "dcBothe"), os.F_OK):
+                if not self.WriteScripts(os.path.join(scriptsfolders, "dcBothe"),  "/dcDumps/dcBothe1"):   
                     return False
-            #if not os.access(os.path.join(appdatafolders, "scripts",  "dcRaid"), os.F_OK):
-            if not self.WriteScripts(os.path.join(appdatafolders, "scripts", "dcRaid"),   prefix+"/dcDumps/dcRaid1"):    
+            #if not os.access(os.path.join(scriptsfolders, "dcRaid"), os.F_OK):
+            if not self.WriteScripts(os.path.join(scriptsfolders, "dcRaid"),   prefix+"/dcDumps/dcRaid1"):    
                 return False
-            if not os.access(os.path.join(appdatafolders, "scripts",  "dcRaide"), os.F_OK):
-                if not self.WriteScripts(os.path.join(appdatafolders, "scripts", "dcRaide"),   "/dcDumps/dcRaide1"):  
+            if not os.access(os.path.join(scriptsfolders, "dcRaide"), os.F_OK):
+                if not self.WriteScripts(os.path.join(scriptsfolders, "dcRaide"),   "/dcDumps/dcRaide1"):  
                     return False
-            #if not os.access(os.path.join(appdatafolders, "scripts",  "dcDump"), os.F_OK):
-            if not self.WriteScripts(os.path.join(appdatafolders, "scripts", "dcDump"),   prefix+"/dcDumps/dcDump1"):    
+            #if not os.access(os.path.join(scriptsfolders, "dcDump"), os.F_OK):
+            if not self.WriteScripts(os.path.join(scriptsfolders, "dcDump"),   prefix+"/dcDumps/dcDump1"):    
                 return False
         
-            if not os.access(os.path.join(appdatafolders, "scripts",  "dcDumpe"), os.F_OK):
-                if not self.WriteScripts(os.path.join(appdatafolders, "scripts", "dcDumpe"),  "/dcDumps/dcDumpe1"):   
+            if not os.access(os.path.join(scriptsfolders, "dcDumpe"), os.F_OK):
+                if not self.WriteScripts(os.path.join(scriptsfolders, "dcDumpe"),  "/dcDumps/dcDumpe1"):   
                     return False
             
-            #if not self.WriteScripts(os.path.join(appdatafolders, "scripts", "dcExp"),         self.getDcExp(stats, dates, ptime)):    return False
-            if not self.WriteScripts(os.path.join(appdatafolders, "scripts", "dcExpe"),   "/text "+  self.getDcExp(stats, dates, ptime)):    return False
-            if not self.WriteScripts(os.path.join(appdatafolders, "scripts", "dcProfs"),   prefix+   self.getDcProfs(stats, dates, ptime)):  return False
-            if not self.WriteScripts(os.path.join(appdatafolders, "scripts", "dcProfse"), "/text "+  self.getDcProfs(stats, dates, ptime)):  return False
-            if not self.WriteScripts(os.path.join(appdatafolders, "scripts", "dcTank"),   prefix+    self.getDcTank(data, dates, ptime)):    return False
-            if not self.WriteScripts(os.path.join(appdatafolders, "scripts", "dcTanke"),  "/text "+  self.getDcTank(data, dates, ptime)):    return False 
+            #if not self.WriteScripts(os.path.join(scriptsfolders, "dcExp"),         self.getDcExp(stats, dates, ptime)):    return False
+            if not self.WriteScripts(os.path.join(scriptsfolders, "dcExpe"),   "/text "+  self.getDcExp(stats, dates, ptime)):    return False
+            if not self.WriteScripts(os.path.join(scriptsfolders, "dcProfs"),   prefix+   self.getDcProfs(stats, dates, ptime)):  return False
+            if not self.WriteScripts(os.path.join(scriptsfolders, "dcProfse"), "/text "+  self.getDcProfs(stats, dates, ptime)):  return False
+            if not self.WriteScripts(os.path.join(scriptsfolders, "dcTank"),   prefix+    self.getDcTank(data, dates, ptime)):    return False
+            if not self.WriteScripts(os.path.join(scriptsfolders, "dcTanke"),  "/text "+  self.getDcTank(data, dates, ptime)):    return False 
 
             # /dc command    
-            if not self.WriteScripts(appdatafolders+"scripts\\dc",  "/text "+       self.getDcHelp(online)): return False
+            if not self.WriteScripts(appdatafolders+"\scripts\\dc",  "/text "+       self.getDcHelp(online)): return False
             if online:
-                if not self.WriteScripts( os.path.join(appdatafolders, "scripts",  "dcStatus"),  "/text DCDump is <font color=green>currently parsing!</font>"): return False
+                if not self.WriteScripts( os.path.join(scriptsfolders, "dcStatus"),  "/text DCDump is <font color=green>currently parsing!</font>"): return False
             else:
-                if not self.WriteScripts( os.path.join(appdatafolders, "scripts",  "dcStatus"),  "/text DCDump is <font color=red>not parsing!</font>"): return False
+                if not self.WriteScripts( os.path.join(scriptsfolders, "dcStatus"),  "/text DCDump is <font color=red>not parsing!</font>"): return False
         
             # Subfolder scripts
-            pathToDumps = os.path.join(appdatafolders, "scripts",  "dcDumps")
+            pathToDumps = os.path.join(scriptsfolders, "dcDumps")
             #if not os.access(pathToDumps, os.F_OK):
             #    os.makedirs(pathToDumps)
             
@@ -578,7 +579,7 @@ class Script():
 
                 i += 1
             
-            return True
+        return True
 
 
     def AddOnlineStatus(self, online):
@@ -758,7 +759,6 @@ class Script():
         
         # Check if AO folder exists
         for appdatafolders in getAppdataFolders():
-            appdatafolders = os.path.join(appdatafolders, "..")
 
             if not os.access(appdatafolders, os.F_OK):
                 print "[Scripts] Error: Could not find a scripts folder with access rights"

@@ -1472,7 +1472,7 @@ Version %s.%d""" % (Build_Version, Build_ID)
             targetWindow = self._config["GroupType"]
             if targetWindow == 'Custom': targetWindow = self._config["GroupName"]
             s = Scripts.Script()
-            if s.AddScripts(self._config["AOPath"], self.CurrentData, self.CurrentStats, self.CurrentPeriod, False, targetWindow):
+            if s.AddScripts(self.CurrentData, self.CurrentStats, self.CurrentPeriod, False, targetWindow):
                 self.frame_1_statusbar.SetLabel("Now available via /Dc ingame!")
             else:
                 self.frame_1_statusbar.SetLabel("Failed to write /dc scripts")

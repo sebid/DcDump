@@ -140,7 +140,7 @@ class WorkerThread (threading.Thread):
         pausedDuration      = 0 # Duration of current pause
         pauseDurationTotal  = 0 # Used to fix DPM in scripts
 
-        s.AddOnlineStatus(self.aopath, True)
+        s.AddOnlineStatus(True)
         while not done:
             # Process messages from GUI thread
             while not self.tasks.empty():
@@ -198,9 +198,9 @@ class WorkerThread (threading.Thread):
                 dataset.globData['?Paused'] = pauseDurationTotal
                 dataset.period = (dataset.period[0], time.time())
 
-                s.AddScripts(self.aopath, dataset.globData, dataset.globStats, dataset.period, True, self.targetWindow)
+                s.AddScripts(dataset.globData, dataset.globStats, dataset.period, True, self.targetWindow)
             else:
-                s.AddOnlineStatus(self.aopath, True)
+                s.AddOnlineStatus(True)
 
         # [End while]
 
@@ -217,7 +217,7 @@ class WorkerThread (threading.Thread):
             self.feedback.put(("Data", dataset.globStats, dataset.globData, dataset.period, self.myname))
             dataset.globData['?Paused'] = pauseDurationTotal
             dataset.period = (dataset.period[0], time.time())
-            if not s.AddScripts(self.aopath, dataset.globData, dataset.globStats, dataset.period, False, self.targetWindow):
+            if not s.AddScripts(dataset.globData, dataset.globStats, dataset.period, False, self.targetWindow):
                 self.feedback.put(("Info", "Failed to write /dc scripts"))  
                 
             self.feedback.put(("Info", "Parse complete"))   

@@ -101,20 +101,22 @@ def AutodetectAO(args = ""):
         return os.path.dirname(output[0])+"\\"
     return "-1"
 
-
+cachedFolders = None
 def getAppdataFolders():
     """
     Gets AO /prefs/ path from Appdata
     @return: Path(s) or None
     """
-    appdata = os.environ['appdata']
-    path = os.path.join(appdata, "..", "Local", "Funcom", "")
-    folders = []
-    for root, dirs, files in os.walk(path):
-        path = os.access(os.path.join(root, "Prefs", "prefs.xml"), os.R_OK)
-        if path:
-            folders.append(root)
-    return folders
+    global cachedFolders
+    if not cachedFolders:
+        appdata = os.environ['appdata']
+        path = os.path.join(appdata, "..", "Local", "Funcom", "")
+        cachedFolders = []
+        for root, dirs, files in os.walk(path):
+            path = os.access(os.path.join(root, "Prefs", "prefs.xml"), os.R_OK)
+            if path:
+                cachedFolders.append(root)
+    return cachedFolders
 
 
 '''
@@ -419,7 +421,7 @@ def GetLogfilePath(accname, id):
         if os.access(logPath, os.F_OK): pathList.append(logPath)
         
     if len(pathList) == 0: return None       
-    latest_subdir = max(pathlist, key=os.path.getmtime)
+    latest_subdir = max(pathList, key=os.path.getmtime)
     return latest_subdir
 
 
