@@ -279,9 +279,10 @@ def LoadToonsDB():
     for id, nick, active, acc, dimension in __SQL:
         # Check if the acc\id folder really exists, if not: disable it.
         if active:
+            active = False
             for appdatafolders in getAppdataFolders():
                 path = os.path.join(appdatafolders, "Prefs", acc, "Char{0}".format(id))
-                if not os.access(path, os.F_OK): active = False
+                if os.access(path, os.F_OK): active = True
 
         # Dimension may not be set for older DBs
         if not dimension: dim = "RK1"

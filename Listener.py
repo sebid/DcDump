@@ -42,7 +42,7 @@ class Listener:
         dllname = self.GetDllPath("Listener.dll")
         if dllname == None:
                 print "[Listen.] Could not find Listener.dll"
-                return
+                raise Exception("File not found: Listener.dll")
         c_dll = ctypes.cdll.LoadLibrary(dllname)
 
         # Set function return types
