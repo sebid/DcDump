@@ -1,4 +1,4 @@
-"""
+﻿"""
 Main processing module
 Loads a given file, parses it in reverse via a regex search.
 Module assumes input file is small enough to fit in main memory.
@@ -20,7 +20,7 @@ patterns = (    r'\S#0000000042000009.+,(?P<TS>\d+)](?P<name>.+) hit (?P<target>
                 r"(?P<TS>\d+)]Your damage shield hit (?P<target>.+) for (?P<amount>\d+) points of damage\.$",                                                    # 10 Damage shield
                 r"(?P<TS>\d+)]Your reflect shield hit (?P<target>.+) for (?P<amount>\d+) points of damage\.$",                                                   # 11 Reflect shield
                 r"You gained (?P<amount>\d+) points of Shadowknowledge\.$",                                                                                      # 12 Got SK
-                r"(?P<amount>\d+) of your (.+) were allocated to your personal research\.$",                                                                     # 13 Research
+                r"(?P<amount>\d+) of your (.+) were allocated to your personal research\.",                                                                      # 13 Research ( .... to your personal research.<br> ) because bug.
                 r"You gained (?P<amount>\d+) new Alien Experience Points\.$",                                                                                    # 14 Got AXP
                 r"You received (?P<amount>\d+) xp\.$",                                                                                                           # 15 Got XP
                 r"(.+) tried to hit you, but missed!$",                                                                                                          # 16 You evaded a hit

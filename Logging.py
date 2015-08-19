@@ -1,4 +1,4 @@
-
+﻿
 import sqlite3
 class History():
     def __init__(self):
