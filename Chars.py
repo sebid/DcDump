@@ -280,7 +280,7 @@ def LoadToonsDB():
         # Check if the acc\id folder really exists, if not: disable it.
         if active:
             for appdatafolders in getAppdataFolders():
-                path = "%s\\Prefs\\%s\\Char%d" % (appdatafolders, acc, id)
+                path = os.path.join(appdatafolders, "Prefs", acc, "Char{0}".format(id))
                 if not os.access(path, os.F_OK): active = False
 
         # Dimension may not be set for older DBs
