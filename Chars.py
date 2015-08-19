@@ -435,7 +435,8 @@ def getLatestLog(toonlist):
     for appdatafolders in getAppdataFolders():
         for accname, id in toonlist:
             path = os.path.join(appdatafolders, "Prefs", accname, "Char%d"%id, "Chat", "Windows", "WindowDCDump", "log.txt")
-            dataset.append( (os.path.getmtime(path), id) )
+			if os.access(logPath, os.F_OK):
+				dataset.append( (os.path.getmtime(path), id) )
 
     # Grab highest timestamp
     dataset = sorted(dataset, key=itemgetter(0))
