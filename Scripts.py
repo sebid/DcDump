@@ -11,16 +11,19 @@ from urllib import urlopen
 import urllib2
 
 def getItemnameFromXyphos(id):
-    request = urllib2.Request("https://aoitems.com/item/{0}/".format(id))
-    request.add_header('User-Agent','OpenAnything/1.0 +http://diveintopython.org/')
-    opener = urllib2.build_opener()
-    data = opener.open(request).read()
+    try:
+        request = urllib2.Request("https://aoitems.com/item/{0}/".format(id))
+        request.add_header('User-Agent','OpenAnything/1.0 +http://diveintopython.org/')
+        opener = urllib2.build_opener()
+        data = opener.open(request).read()
     
-    result = re.search("<h1>([^<]*)</h1>", data, re.I)
+        result = re.search('\\<title>(.*) - Anarchy Online Items Database\\<', data, re.I)
     
-    if result:
-        return result.groups()[0]
-    else:
+        if result:
+            return result.groups()[0]
+        else:
+            return "?"
+    except:
         return "?"
     
 def getFmtDates(dates):
